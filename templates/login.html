@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login Page</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<!-- Custom CSS -->
+	<style>
+		body {
+			background-color: #f8f9fa;
+		}
+		.form-login {
+			background-color: #ffffff;
+			padding: 20px;
+			margin-top: 50px;
+			box-shadow: 0px 0px 10px #e9e9e9;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4 offset-md-4">
+				<form class="form-login" action="/login" method='post'>
+					<h2 class="text-center">Login</h2>
+					<div class="form-group">
+						<label for="username">e-mail</label>
+						<input type="text" class="form-control" name="username" id="username" placeholder="e-mail cadastrado">
+					</div>
+					<div class="form-group" >
+						<label for="password">Senha</label>
+						<input type="password" class="form-control" name="password"  id="password" placeholder="senha cadastrada">
+					</div>
+					<button type="submit" class="btn btn-primary btn-block">Login</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
