@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html Lang="pt-br">
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" href="../static/css/styles.css"/>
+	<title>Upload de arquivo CSV</title>
+</head>
+<body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="sidebar">
+          	<div class="sidebar">
+              <h3>Menu</h3>
+              <ul class="nav nav-pills nav-stacked">
+                <li class="active"><a href="{{ url_for('csv', id_usuario=id_usuario) }}">Home</a></li>
+                <li><a href="{{ url_for('dashboard', id_usuario=id_usuario) }}">Dashboard</a></li>
+                <li><a href="{{ url_for('analise', id_usuario=id_usuario) }}">Analise</a></li>
+              </ul>
+              </div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <h1>Tabela de dados</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>INGRESSO</th>
+                <th>ALUNO</th>
+                <th>TIPOINGRESSO</th>
+                <th>SITUACAO_ALUNO</th>
+                <th>DATACOLACAO</th>
+                <th>DATAENCERRAMENTO</th>
+                <th>IRA</th>
+                <th>CURRICULO</th>
+                <th>CARGA_HOR</th>
+                <th>CARGA_OPC</th>
+                <th>CARGA_ELET</th>
+                <th>CARGA_COMP</th>
+                <th>DISCIPLINA</th>
+                <th>PERIODO</th>
+                <th>NOTA</th>
+                <th>SITUACAO_DISCIPLINA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in data.iterrows() %}
+              <tr>
+                <td>{{ row[1]['INGRESSO'] }}</td>
+                <td>{{ row[1]['ALUNO'] }}</td>
+                <td>{{ row[1]['TIPOINGRESSO'] }}</td>
+                <td>{{ row[1]['SITUACAO_ALUNO'] }}</td>
+                <td>{{ row[1]['DATACOLACAO'] }}</td>
+                <td>{{ row[1]['DATAENCERRAMENTO'] }}</td>
+                <td>{{ row[1]['IRA'] }}</td>
+                <td>{{ row[1]['CURRICULO'] }}</td>
+                <td>{{ row[1]['CARGA_HOR'] }}</td>
+                <td>{{ row[1]['CARGA_OPC'] }}</td>
+                <td>{{ row[1]['CARGA_ELET'] }}</td>
+                <td>{{ row[1]['CARGA_COMP'] }}</td>
+                <td>{{ row[1]['DISCIPLINA'] }}</td>
+                <td>{{ row[1]['PERIODO'] }}</td>
+                <td>{{ row[1]['NOTA'] }}</td>
+                <td>{{ row[1]['SITUACAO_DISCIPLINA'] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div>
+            {% if page > 1 %}
+            <a href="{{ url_for('dashboard', id_usuario=id_usuario,page=page-1) }}">Anterior</a>
+            {% else %}
+            <a class="disabled">Anterior</a>
+            {% endif %}
+            {% if page < num_pages %}
+            <a href="{{ url_for('dashboard',id_usuario=id_usuario,page=page+1) }}">Próxima</a>
+            {% else %}
+            <a class="disabled">Próxima</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/js/script.js"></script>
+  </body>
+</html>
