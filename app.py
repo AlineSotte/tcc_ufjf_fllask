@@ -145,15 +145,19 @@ def mostrar_grafico_comparativo():
     .reset_index(name='TOTAL') 
 
     dado_cota['Tipo'] = pd.Series(['Cota' for x in range(len(dado_cota.index))])
-
-    ua=pd.concat([dado_n_cota,dado_cota,dado_outros])
+    df=pd.concat([dado_n_cota,dado_cota,dado_outros])
     
-    trace1 = go.Bar(x=ua['SITUACAO_ALUNO'], y=ua['Tipo']['Cota'], name='Cota')
-    trace2 = go.Bar(x=ua['SITUACAO_ALUNO'], y=ua['Tipo']['N_Cota'], name='Não Cota')
-    trace3 = go.Bar(x=ua['SITUACAO_ALUNO'], y=ua['Tipo']['Outros'], name='Outros')
+    trace1 = go.Bar(x=df[(df['Tipo'] == 'Cota')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'Cota')]['TOTAL'],
+                    name='Cota', marker=dict(color='#2ecc71'))
+    trace2 = go.Bar(x=df[(df['Tipo'] == 'N_Cota')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'N_Cota')]['TOTAL'],
+                    name='Não Cota', marker=dict(color='#3498db'))
+    trace3 = go.Bar(x=df[(df['Tipo'] == 'Outros')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'Outros')]['TOTAL'],
+                    name='Outros', marker=dict(color='#e74c3c'))
     data = [trace1, trace2, trace3]
-    layout = go.Layout(title='Comparativo de Cotas', xaxis=dict(title='Fatores'),
-                       yaxis=dict(title='Porcentagem de Cotas (%)'))
+    layout = go.Layout(title='Gráfico Interativo com Três Variáveis',
+                       xaxis=dict(title='Situação do Aluno'),
+                       yaxis=dict(title='Total'),
+                       barmode='group')
     fig = go.Figure(data=data, layout=layout)
 
     # Renderiza o gráfico no HTML usando a função 'plot' do Plotly
