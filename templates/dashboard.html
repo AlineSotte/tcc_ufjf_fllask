@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Dashboard - {{ nome_arquivo }}</h1>
-  {% if data.empty %}
-    <p>O arquivo CSV está vazio</p>
-  {% else %}
-    <table class="table">
-      <thead>
-        <tr>
-          {% for column in data.columns %}
+          <h1>Dashboard - {{ nome_arquivo }}</h1>
+          {% if data.empty %}
+          <p>O arquivo CSV está vazio</p>
+          {% else %}
+          <table class="table">
+            <thead>
+              <tr>
+                {% for column in data.columns %}
           <th>INGRESSO</th>
           <th>ALUNO</th>
           <th>TIPOINGRESSO</th>
@@ -25,12 +25,12 @@
           <th>PERIODO</th>
           <th>NOTA</th>
           <th>SITUACAO_DISCIPLINA</th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
         {% for row in data %}
-          <tr>
+              <tr>
             <td>{{ row['INGRESSO'] }}</td>
             <td>{{ row['ALUNO'] }}</td>
             <td>{{ row['TIPOINGRESSO'] }}</td>
@@ -47,44 +47,47 @@
             <td>{{ row['PERIODO'] }}</td>
             <td>{{ row['NOTA'] }}</td>
             <td>{{ row['SITUACAO_DISCIPLINA'] }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <nav>
-      <ul class="pagination">
-        {% if current_page > 1 %}
-          <li class="page-item">
-            <a class="page-link" href="{{ url_for('dashboard', id_usuario=id_usuario, nome_arquivo=nome_arquivo, page=current_page-1, per_page=per_page) }}">Anterior</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <span class="page-link">Anterior</span>
-          </li>
-        {% endif %}
-
-        {% for link in page_links %}
-          {% if link[0] == current_page %}
-            <li class="page-item active">
-              <span class="page-link">{{ link[0] }}</span>
-            </li>
-          {% else %}
-            <li class="page-item">
-              <a class="page-link" href="{{ link[1] }}">{{ link[0] }}</a>
-            </li>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <nav>
+            <ul class="pagination">
+              {% if current_page > 1 %}
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="{{ url_for('dashboard', id_usuario=id_usuario, nome_arquivo=nome_arquivo, page=current_page-1, per_page=per_page) }}"
+                  >Anterior</a
+                >
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">Anterior</span>
+              </li>
+              {% endif %} {% for link in page_links %} {% if link[0] ==
+              current_page %}
+              <li class="page-item active">
+                <span class="page-link">{{ link[0] }}</span>
+              </li>
+              {% else %}
+              <li class="page-item">
+                <a class="page-link" href="{{ link[1] }}">{{ link[0] }}</a>
+              </li>
+              {% endif %} {% endfor %} {% if current_page < num_pages %}
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="{{ url_for('dashboard', id_usuario=id_usuario, nome_arquivo=nome_arquivo, page=current_page+1, per_page=per_page) }}"
+                  >Próxima</a
+                >
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">Próxima</span>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
           {% endif %}
-        {% endfor %}
-
-        {% if current_page < num_pages %}
-          <li class="page-item">
-            <a class="page-link" href="{{ url_for('dashboard', id_usuario=id_usuario, nome_arquivo=nome_arquivo, page=current_page+1, per_page=per_page) }}">Próxima</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <span class="page-link">Próxima</span>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
-  {% endif %}
 {% endblock %}

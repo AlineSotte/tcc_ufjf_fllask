@@ -29,10 +29,7 @@ app.config['SESSION_FILE_DIR'] = conf.SESSION_FILE_DIR
 
 @app.route('/')
 def index():
-    if 'username' in session:
-        return url_for('index', username=session['username'])
-    else:
-        return redirect(url_for('login'))
+    return redirect(url_for('login'))
 
 ## Login e Logof
 @app.route('/login', methods=['GET','POST'])
@@ -84,8 +81,7 @@ def csv(id_usuario):
     else:
         return render_template('csv.html', id_usuario=id_usuario)
 
-## dashboard com paginação
-
+## dashboard com paginação dando ruim pra carai
 @app.route('/dashboard/<int:id_usuario>/<string:nome_arquivo>', methods=['GET'])
 def dashboard(id_usuario, nome_arquivo):
     arquivo_csv = Arquivo.query.filter_by(nome_arquivo=nome_arquivo).first()

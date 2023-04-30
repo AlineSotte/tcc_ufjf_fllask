@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div>
+  <a href="{{ url_for('dashboard',id_usuario=id_usuario,nome_arquivo=nome_arquivo) }}" class="btn btn-outline-primary">Voltar</a>
+</div>
           <div>
             <h3>Tabela de dados</h3>
               {{ plot|safe }}
