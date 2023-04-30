@@ -1,40 +1,20 @@
-<!DOCTYPE html>
-<html Lang="pt-br">
-<head>
-	<meta charset="UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css" />
-	<link rel="stylesheet" href="../static/css/styles.css"/>
-	<title>Upload de arquivo CSV</title>
-</head>
-<body>
-	<div class="container-fluid">
-	  <div class="row">
-		<div class="col-sm-3 col-md-2">
-			<div class="sidebar">
-				<h3>Menu</h3>
-				<ul class="nav nav-pills nav-stacked">
-					<li class="active"><a href="{{ url_for('csv', id_usuario=id_usuario) }}">Home</a></li>
-					<li><a href="{{ url_for('dashboard', id_usuario=id_usuario) }}">Dashboard</a></li>
-					<li><a href="{{ url_for('analise', id_usuario=id_usuario) }}">Analise</a></li>
-				</ul>
-			  </div>
-		</div>
-		<div class="col-sm-9 col-md-10 main">
-			<form action="{{ url_for('csv', id_usuario=id_usuario) }}" method="POST" enctype="multipart/form-data">
-			<div class="form-group">
-			<label for="arquivo_csv"> Selecione um arquivo csv:</label>
-			<input type="file" name="arquivo_csv" id="arquivo_csv" accept=".csv"><br><br>
-			</div>
-			<input type="submit" class="btn btn-primary" value="Enviar">
-			</form>
+{% extends "base.html" %}
 
-			
-		</div>
-	  </div>
-	</div>	
-<script src="../static/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../static/js/script.js"></script>
-</body>
-</html>
+{% block content %}
+<form action="{{ url_for('csv', id_usuario=id_usuario) }}" method="POST" enctype="multipart/form-data">
+<div class="form-group">
+<label for="arquivo_csv"> Selecione um arquivo csv:</label>
+<input type="file" name="arquivo_csv" id="arquivo_csv" accept=".csv">
+{% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+</div>
+<input type="submit" class="btn btn-primary" value="Enviar">
+</form>
+{% endblock %}

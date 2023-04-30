@@ -16,3 +16,6 @@ CREATE TABLE usuarios (
 );
 
 ALTER TABLE tabela_csv MODIFY arquivo_csv LONGBLOB;
+INSERT INTO usuarios  (nome, email, senha) VALUES ('Aline Sotte', 'aline.sotte@example.com', 'senha');
+INSERT INTO usuarios  (nome, email, senha) VALUES ('Hellen Dias', 'hellen.dias@example.com', '12345');
+INSERT INTO analise_tcc.usuarios (nome, email, senha) VALUES ('Line Sotte', 'aline.sotte@ufjf.com', '12345');

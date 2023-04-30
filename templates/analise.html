@@ -1,28 +1,6 @@
-<!DOCTYPE html>
-<html Lang="pt-br">
-<head>
-	<meta charset="UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-	<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="../static/css/styles.css"/>
-	<title>Upload de arquivo CSV</title>
-</head>
-<body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2">
-          	<div class="sidebar">
-              <h3>Menu</h3>
-              <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="{{ url_for('csv', id_usuario=id_usuario) }}">Home</a></li>
-                <li><a href="{{ url_for('dashboard', id_usuario=id_usuario) }}">Dashboard</a></li>
-                <li><a href="{{ url_for('analise', id_usuario=id_usuario) }}">Analise</a></li>
-              </ul>
-            </div>
-        </div>
-        <div class="col-sm-9 col-md-10 main">
+{% extends "base.html" %}
+
+{% block content %}
           <div>
             <h3>Tabela de dados</h3>
               {{ plot|safe }}
@@ -38,7 +16,4 @@
         </div>
       </div>
     </div>
-    <script src="../static/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../static/js/script.js"></script>
-  </body>
-</html>
+    {% endblock %}

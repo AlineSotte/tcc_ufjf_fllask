@@ -1,90 +1,90 @@
-<!DOCTYPE html>
-<html Lang="pt-br">
-<head>
-	<meta charset="UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css" />
-	<link rel="stylesheet" href="../static/css/styles.css"/>
-	<title>Upload de arquivo CSV</title>
-</head>
-<body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="sidebar">
-          	<div class="sidebar">
-              <h3>Menu</h3>
-              <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="{{ url_for('csv', id_usuario=id_usuario) }}">Home</a></li>
-                <li><a href="{{ url_for('dashboard', id_usuario=id_usuario) }}">Dashboard</a></li>
-                <li><a href="{{ url_for('analise', id_usuario=id_usuario) }}">Analise</a></li>
-              </ul>
-              </div>
-          </div>
-        </div>
-        <div class="col-md-9">
-          <h1>Tabela de dados</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>INGRESSO</th>
-                <th>ALUNO</th>
-                <th>TIPOINGRESSO</th>
-                <th>SITUACAO_ALUNO</th>
-                <th>DATACOLACAO</th>
-                <th>DATAENCERRAMENTO</th>
-                <th>IRA</th>
-                <th>CURRICULO</th>
-                <th>CARGA_HOR</th>
-                <th>CARGA_OPC</th>
-                <th>CARGA_ELET</th>
-                <th>CARGA_COMP</th>
-                <th>DISCIPLINA</th>
-                <th>PERIODO</th>
-                <th>NOTA</th>
-                <th>SITUACAO_DISCIPLINA</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for row in data.iterrows() %}
-              <tr>
-                <td>{{ row[1]['INGRESSO'] }}</td>
-                <td>{{ row[1]['ALUNO'] }}</td>
-                <td>{{ row[1]['TIPOINGRESSO'] }}</td>
-                <td>{{ row[1]['SITUACAO_ALUNO'] }}</td>
-                <td>{{ row[1]['DATACOLACAO'] }}</td>
-                <td>{{ row[1]['DATAENCERRAMENTO'] }}</td>
-                <td>{{ row[1]['IRA'] }}</td>
-                <td>{{ row[1]['CURRICULO'] }}</td>
-                <td>{{ row[1]['CARGA_HOR'] }}</td>
-                <td>{{ row[1]['CARGA_OPC'] }}</td>
-                <td>{{ row[1]['CARGA_ELET'] }}</td>
-                <td>{{ row[1]['CARGA_COMP'] }}</td>
-                <td>{{ row[1]['DISCIPLINA'] }}</td>
-                <td>{{ row[1]['PERIODO'] }}</td>
-                <td>{{ row[1]['NOTA'] }}</td>
-                <td>{{ row[1]['SITUACAO_DISCIPLINA'] }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-          <div>
-            {% if page > 1 %}
-            <a href="{{ url_for('dashboard', id_usuario=id_usuario,page=page-1) }}">Anterior</a>
-            {% else %}
-            <a class="disabled">Anterior</a>
-            {% endif %}
-            {% if page < num_pages %}
-            <a href="{{ url_for('dashboard',id_usuario=id_usuario,page=page+1) }}">Próxima</a>
-            {% else %}
-            <a class="disabled">Próxima</a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-    <script src="../static/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../static/js/script.js"></script>
-  </body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Dashboard - {{ nome_arquivo }}</h1>
+  {% if data.empty %}
+    <p>O arquivo CSV está vazio</p>
+  {% else %}
+    <table class="table">
+      <thead>
+        <tr>
+          {% for column in data.columns %}
+          <th>INGRESSO</th>
+          <th>ALUNO</th>
+          <th>TIPOINGRESSO</th>
+          <th>SITUACAO_ALUNO</th>
+          <th>DATACOLACAO</th>
+          <th>DATAENCERRAMENTO</th>
+          <th>IRA</th>
+          <th>CURRICULO</th>
+          <th>CARGA_HOR</th>
+          <th>CARGA_OPC</th>
+          <th>CARGA_ELET</th>
+          <th>CARGA_COMP</th>
+          <th>DISCIPLINA</th>
+          <th>PERIODO</th>
+          <th>NOTA</th>
+          <th>SITUACAO_DISCIPLINA</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+          <tr>
+            <td>{{ row['INGRESSO'] }}</td>
+            <td>{{ row['ALUNO'] }}</td>
+            <td>{{ row['TIPOINGRESSO'] }}</td>
+            <td>{{ row['SITUACAO_ALUNO'] }}</td>
+            <td>{{ row['DATACOLACAO'] }}</td>
+            <td>{{ row['DATAENCERRAMENTO'] }}</td>
+            <td>{{ row['IRA'] }}</td>
+            <td>{{ row['CURRICULO'] }}</td>
+            <td>{{ row['CARGA_HOR'] }}</td>
+            <td>{{ row['CARGA_OPC'] }}</td>
+            <td>{{ row['CARGA_ELET'] }}</td>
+            <td>{{ row['CARGA_COMP'] }}</td>
+            <td>{{ row['DISCIPLINA'] }}</td>
+            <td>{{ row['PERIODO'] }}</td>
+            <td>{{ row['NOTA'] }}</td>
+            <td>{{ row['SITUACAO_DISCIPLINA'] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <nav>
+      <ul class="pagination">
+        {% if current_page > 1 %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('dashboard', id_usuario=id_usuario, nome_arquivo=nome_arquivo, page=current_page-1, per_page=per_page) }}">Anterior</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Anterior</span>
+          </li>
+        {% endif %}
+
+        {% for link in page_links %}
+          {% if link[0] == current_page %}
+            <li class="page-item active">
+              <span class="page-link">{{ link[0] }}</span>
+            </li>
+          {% else %}
+            <li class="page-item">
+              <a class="page-link" href="{{ link[1] }}">{{ link[0] }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+
+        {% if current_page < num_pages %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('dashboard', id_usuario=id_usuario, nome_arquivo=nome_arquivo, page=current_page+1, per_page=per_page) }}">Próxima</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Próxima</span>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+{% endblock %}
