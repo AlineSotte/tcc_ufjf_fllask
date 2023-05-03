@@ -8,7 +8,7 @@ import math
 import io
 
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder='static')
 
 conf = Config()
 instancia= Analise()
