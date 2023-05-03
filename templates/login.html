@@ -5,16 +5,13 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css" />
-	<link rel="stylesheet" href="../static/styles.css"/>
+	<link rel="stylesheet" href="../static/css/styles.css"/>
 	<title>Upload de arquivo CSV</title>
 </head>
 <body>
-	<div class="container">
+	<div class="container" id='cont-top'>
 		<div class="row">
 			<div class="col-md-4 offset-md-4">
-				{% if error %}
-     				 <p>{{ error }}</p>
-    			{% endif %}
 				<form class="form-login" action="{{ url_for('login') }}" method='post'>
 					<label for="username">Username:</label>
 					<input type="text" id="username" name="username"><br><br>
@@ -26,7 +23,6 @@
 		</div>
 	</div>
 
-	<!-- Bootstrap JS -->
 <script src="../static/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="../static/js/script.js"></script>
 </body>

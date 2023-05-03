@@ -1,7 +1,10 @@
-import pandas as pd
 from plotly.subplots import make_subplots
+from models import db, Usuario, Arquivo
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
+import pandas as pd
+import io
+
 
 class Analise:
     
@@ -101,4 +104,12 @@ class Analise:
             .reset_index(name='TOTAL_REPROVACAO') 
         return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
         
+    def ler_ultimo_arquivo(self,id):
+        arquivo = Arquivo.query.filter_by(id=id).first()
+        dados_csv = arquivo.arquivo_csv.decode('utf-8')
+        df = pd.read_csv(io.StringIO(dados_csv))
+        return df
     
+    def pegar_id(self,arquivo):
+        arq = Arquivo.query.filter_by(nome_arquivo=arquivo).first()
+        return arq.id
