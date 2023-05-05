@@ -80,13 +80,13 @@ def dashboard(id_usuario, id):
     if df.empty:
         flash('O arquivo CSV está vazio', 'error')
         return redirect(url_for('csv', id_usuario=id_usuario))
-    per_page = request.args.get('per_page', 10, type=int)
-    num_pages = math.ceil(df.shape[0] / per_page)
-    page = request.args.get('page', 1, type=int)
-    current_page = page 
-    page_links = [url_for('dashboard', id_usuario=id_usuario,id=id,page=p, per_page=per_page) for p in range(1, num_pages+1)]
-    data = df[(page - 1) * per_page:page * per_page].to_dict(orient='records')
-    return render_template('dashboard.html', data=data, page=page, per_page=per_page, current_page=current_page, page_links=page_links, num_pages=num_pages,id=id, id_usuario=id_usuario)
+    page = request.args.get('page', default=1, type=int)
+    per_page = 7
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    data = df.iloc[start_idx:end_idx]
+    num_pages = len(df) // per_page + 1
+    return render_template('dashboard.html', id_usuario=id_usuario,id=id,data=data, page=page, num_pages=num_pages)
 
 ## Analise ##
 @app.route('/analise/<int:id_usuario>/<int:id>', methods=['GET'])

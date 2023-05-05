@@ -106,23 +106,37 @@ p, li, ul {
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 10px;
+  padding-bottom: 10px;
   margin-top: 20px;
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
+.table {
+  max-height: 500px; 
+  overflow-x: scroll; 
 }
 
-thead th {
-  background-color: #f2f2f2;
-  color: #333;
-  font-weight: bold;
-  padding: 8px;
-  text-align: left;
+th,
+td {
+  padding: 10px; 
+  text-align: center; 
 }
 
 tbody td {
   border-bottom: 1px solid #ccc;
   padding: 8px;
+}
+
+.disabled {
+  color: gray;
+  cursor: not-allowed;
+}
+
+a {
+  color: #0000FF; 
+  text-decoration: none; 
+}
+
+a:hover {
+  color: #343a40; 
+  text-decoration: underline;
 }
