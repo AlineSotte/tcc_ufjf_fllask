@@ -1,36 +1,6 @@
-<!DOCTYPE html>
-<html Lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"/>
-  <title>Upload de arquivo CSV</title>
-</head>
-<body>
-  <div class="container-fluid ">
-     <div class="row">
-        <div class="col-6 col-md-3">
-        <div class="sidebar">
-           <div class="d-flex justify-content-between align-items-center">
-              <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
-           </div>
-           <ul class="nav flex-column">
-              <h3>Menu</h3>
-              <li class="nav-item">
-                 <a class="nav-link active" href="{{ url_for('csv', id_usuario=id_usuario) }}">Home</a>
-              </li>
-              <li class="nav-item">
-                 <a class="nav-link" href="#">Dashboard</a>
-              </li>
-              <li class="nav-item">
-                 <a class="nav-link" href="#">Analise</a>
-              </li>
-           </ul>
-        </div>
-     </div>
-     <div class="col col-md-9">
+{% extends "base.html" %}
+
+   {% block content %}
         <div class="main">
           <div>
             <h3>Tabela de dados</h3>
@@ -44,9 +14,4 @@
             <h3>Comparativos entre cotitas ou não</h3>
             {{ comparativo|safe }}
         </div>
-      </div>       
-     </div>
-  </div>
-  <script src="{{url_for('static',filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{url_for('static',filename='js/script.js') }}"></script>
-</body>
+   {% endblock %}

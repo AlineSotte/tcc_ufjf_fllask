@@ -3,12 +3,9 @@ from models import db, Usuario, Arquivo
 from datetime import datetime
 from analise import Analise
 from config import Config
-import pandas as pd
-import math
-import io
 
 
-app = Flask(__name__,static_folder='static')
+app = Flask(__name__, static_folder='static')
 
 conf = Config()
 instancia= Analise()
