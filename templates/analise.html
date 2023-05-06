@@ -2,6 +2,9 @@
 
    {% block content %}
         <div class="main">
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('dashboard', id_usuario=id_usuario,id=id, page=1)}}" class="btn btn-primary"> Dados Gerais</a>
+          </div>
           <div>
             <h3>Tabela de dados</h3>
               {{ plot|safe }}

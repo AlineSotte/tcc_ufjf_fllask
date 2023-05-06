@@ -73,7 +73,7 @@ class Analise:
         dado_cota = dados_unicos.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['SITUACAO_ALUNO']).size()\
         .sort_values(ascending=False) \
         .reset_index(name='TOTAL') 
-
+        
         dado_cota['Tipo'] = pd.Series(['Cota' for x in range(len(dado_cota.index))])
         df=pd.concat([dado_n_cota,dado_cota,dado_outros])
         
@@ -89,7 +89,6 @@ class Analise:
                         yaxis=dict(title='Total'),
                         barmode='group')
         fig = go.Figure(data=data, layout=layout)
-
         plot_div = fig.to_html(full_html=False)
         
         return plot_div
@@ -113,3 +112,5 @@ class Analise:
     def pegar_id(self,arquivo):
         arq = Arquivo.query.filter_by(nome_arquivo=arquivo).first()
         return arq.id
+    
+    
