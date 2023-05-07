@@ -1,5 +1,5 @@
 from plotly.subplots import make_subplots
-from models import db, Usuario, Arquivo
+from models import Arquivo
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import pandas as pd
@@ -113,4 +113,7 @@ class Analise:
         arq = Arquivo.query.filter_by(nome_arquivo=arquivo).first()
         return arq.id
     
-    
+    def listar_cinco_arquivos(self, id_usuario):
+        id = id_usuario
+        arquivos = Arquivo.query.filter_by(id_usuario=id).order_by(Arquivo.id_usuario.desc()).limit(5).all()
+        return arquivos

@@ -70,7 +70,17 @@ def csv(id_usuario):
         return redirect(url_for('dashboard', id_usuario=id_usuario, id=id))
     else:
         return render_template('csv.html', id_usuario=id_usuario)
+    
+## listar 5 arquivos para analise em tabela 
+@app.route('/list/<int:id_usuario>', methods=['GET', 'POST'])
+def listar_arquvos(id_usuario):
+    arquivos = instancia.listar_cinco_arquivos(id_usuario)
+    if request.method == 'POST':
+        return redirect(url_for('dashboard', id_usuario=id_usuario, id=id), list_arquivos=arquivos)
+    else:
+        return render_template('csv.html', id_usuario=id_usuario)
 
+# paginação e download do arquivo
 @app.route('/dashboard/<int:id_usuario>/<int:id>', methods=['GET'])
 def dashboard(id_usuario, id):
     df = instancia.ler_ultimo_arquivo(id)
@@ -84,6 +94,9 @@ def dashboard(id_usuario, id):
     data = df.iloc[start_idx:end_idx]
     num_pages = len(df) // per_page + 1
     return render_template('dashboard.html', id_usuario=id_usuario,id=id,data=data, page=page, num_pages=num_pages)
+
+## listar 5 os ultimos arquivos
+
 
 ## Analise ##
 @app.route('/analise/<int:id_usuario>/<int:id>', methods=['GET'])
