@@ -26,11 +26,12 @@
            <br>
            <br>
             <div>
-              <table>
+              <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th> Id </th>
+                        <th> Id Arquivo</th>
                         <th> Nome Arquivo </th>
+                        <th> Data Criação </th>
                         <th> Dados Gerais </th>
                     </tr>
                 </thead>
@@ -39,6 +40,7 @@
                         <tr>
                             <td>{{ item.id }}</td>
                             <td>{{ item.nome_arquivo }}</td>
+                            <td>{{ item.data_criacao }}</td>
                             <td><a href="{{ url_for('dashboard', id_usuario=item.usuario_id, id=item.id) }}" class="btn btn-primary" >Visualizar</a></td>
                         </tr>
                     {% endfor %}

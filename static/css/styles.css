@@ -110,11 +110,6 @@ p, li, ul {
   margin-top: 20px;
 }
 
-.table {
-  max-height: 500px; 
-  overflow-x: scroll; 
-}
-
 th,
 td {
   padding: 10px; 
@@ -139,4 +134,41 @@ a {
 a:hover {
   color: #343a40; 
   text-decoration: underline;
+}
+
+.tab {
+  display: none;
+}
+
+.tab.active {
+  display: block;
+}
+
+.tab-menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tab-menu li {
+  display: inline-block;
+  margin-right: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+.tab-menu li.active {
+  background-color: #f9f9f9;
+  border-color: #ccc;
+  border-bottom: 1px solid #fff;
+}
+
+#btn-dados{
+  margin-bottom: 10px;
+}
+
+#scroll-tabela{
+  overflow-x: scroll;
 }

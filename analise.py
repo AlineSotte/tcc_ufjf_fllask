@@ -106,7 +106,8 @@ class Analise:
     def ler_ultimo_arquivo(self,id):
         arquivo = Arquivo.query.filter_by(id=id).first()
         dados_csv = arquivo.arquivo_csv.decode('utf-8')
-        df = pd.read_csv(io.StringIO(dados_csv))
+        df = pd.read_csv(io.StringIO(dados_csv),sep="[,;]", decimal=',')
+        print(df.head())
         return df
     
     def pegar_id(self,arquivo):

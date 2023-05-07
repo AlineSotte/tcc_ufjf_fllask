@@ -78,12 +78,14 @@ def csv_list(id_usuario):
 # paginação e download do arquivo
 @app.route('/dashboard/<int:id_usuario>/<int:id>', methods=['GET'])
 def dashboard(id_usuario, id):
+    #verifica se o arquivo está vazio
     df = instancia.ler_ultimo_arquivo(id)
+        
     if df.empty:
         flash('O arquivo CSV está vazio', 'error')
         return redirect(url_for('csv', id_usuario=id_usuario))
     page = request.args.get('page', default=1, type=int)
-    per_page = 7
+    per_page = 5
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
     data = df.iloc[start_idx:end_idx]

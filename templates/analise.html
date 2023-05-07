@@ -2,19 +2,27 @@
 
    {% block content %}
         <div class="main">
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex justify-content-between align-items-center" id='btn-dados'>
             <a href="{{ url_for('dashboard', id_usuario=id_usuario,id=id, page=1)}}" class="btn btn-primary"> Dados Gerais</a>
           </div>
-          <div>
+          <ul class="tab-menu">
+            <li class="active" onclick="openTab('tab1')" data-tab="tab1">Tabela Dados</li>
+            <li onclick="openTab('tab2')" data-tab="tab2">Analise Disciplina</li>
+            <li onclick="openTab('tab3')" data-tab="tab3">Comparativo</li>
+          </ul>
+          
+          <div class="tab active" id="tab1">
             <h3>Tabela de dados</h3>
-              {{ plot|safe }}
+            {{ plot|safe }}
           </div>
-          <div class="table-style">
+          
+          <div class="tab" id="tab2">
             <h3>Disicplinas que mais retém alunos no curso de graduação</h3>
-              {{maior_reprovacao|safe}}
+            {{maior_reprovacao|safe}}
           </div>
-          <div>
+          
+          <div class="tab" id="tab3">
             <h3>Comparativos entre cotitas ou não</h3>
             {{ comparativo|safe }}
-        </div>
+          </div>
    {% endblock %}
