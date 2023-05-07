@@ -1,4 +1,5 @@
 from flask import Flask, render_template,redirect, url_for,request,session, flash,send_file
+from werkzeug.utils import secure_filename
 from models import db, Usuario, Arquivo
 from datetime import datetime
 from analise import Analise
@@ -61,9 +62,9 @@ def csv_list(id_usuario):
             flash('Selecione um arquivo CSV para enviar', 'error')
             return redirect(request.url)
         arquivo_bytes = arquivo.read()
-        agora = datetime.now()
-        data_hora = agora.strftime("%d%m%Y%H%M%S")
-        nome_arq = f'arquivo_CSV_{data_hora}'
+        agora = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        arquivo_csv = arquivo.filename.split('.')[0] + '_'
+        nome_arq = secure_filename(f"{arquivo_csv}{agora}")
         if Arquivo.query.filter_by(nome_arquivo=nome_arq).first():
             flash('Este arquivo já foi enviado', 'error')
             return redirect(request.url)
