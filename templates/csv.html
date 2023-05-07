@@ -2,7 +2,7 @@
 
    {% block content %}
          <div class="main">
-           <form action="{{ url_for('csv', id_usuario=id_usuario) }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+           <form action="{{ url_for('csv_list', id_usuario=id_usuario) }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
              <div class="mb-3">
                <label for="arquivo_csv" class="form-label">Selecione um arquivo CSV:</label>
                <div class="input-group">
@@ -39,16 +39,11 @@
                         <tr>
                             <td>{{ item.id }}</td>
                             <td>{{ item.nome_arquivo }}</td>
-                            <td><a href="{{ url_for('dashboard', id_usuario=item.id_usuario, id=item.id) }}">Visualizar</a></td>
+                            <td><a href="{{ url_for('dashboard', id_usuario=item.usuario_id, id=item.id) }}" class="btn btn-primary" >Visualizar</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            
             </div>
-          <div class="table">
-
-
           </div>
-         </div>
    {% endblock %}

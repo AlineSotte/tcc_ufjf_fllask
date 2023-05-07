@@ -114,6 +114,5 @@ class Analise:
         return arq.id
     
     def listar_cinco_arquivos(self, id_usuario):
-        id = id_usuario
-        arquivos = Arquivo.query.filter_by(id_usuario=id).order_by(Arquivo.id_usuario.desc()).limit(5).all()
+        arquivos = Arquivo.query.filter_by(usuario_id=id_usuario).order_by(Arquivo.id.desc()).limit(5).all()
         return arquivos
