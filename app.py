@@ -48,10 +48,11 @@ def logout():
 
 ## download arquivo e gravar no banco de dados
 ## Listar 5 arquivos descending
-@app.route('/list/<int:id_usuario>', methods=['GET', 'POST'])
+@app.route('/dados_csv/<int:id_usuario>', methods=['GET', 'POST'])
 def csv_list(id_usuario):
     
     arquivos = instancia.listar_cinco_arquivos(id_usuario)
+    usuario_logado=Usuario.query.filter_by(id=id_usuario).first()
     
     if request.method == 'POST' and request.form.get('download_template') == 'true':
         template = Arquivo.query.filter_by(nome_arquivo='template_analise_2023_05_07_21_46_37.csv').first()
@@ -81,7 +82,7 @@ def csv_list(id_usuario):
         id = instancia.pegar_id(nome_arq)
         return redirect(url_for('dashboard', id_usuario=id_usuario, id=id))
 
-    return render_template('csv.html', id_usuario=id_usuario, arquivos=arquivos)
+    return render_template('csv.html', id_usuario=id_usuario, arquivos=arquivos, usuario_logado=usuario_logado.nome)
   
 # paginação e download do arquivo
 @app.route('/dashboard/<int:id_usuario>/<int:id>', methods=['GET'])
@@ -108,7 +109,7 @@ def analise(id_usuario,id):
     data=df
     page=1
     return render_template('analise.html', id_usuario=id_usuario,id=id,page=page,plot=situacao_aluno.to_html(full_html=False), maior_reprovacao=maior_reprovacao.to_html(classes='table table-striped'), comparativo=comp, data=data)
-  
+
 if __name__ == '__main__':
     app.run(debug=True)
 

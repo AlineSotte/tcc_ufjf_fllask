@@ -3,6 +3,9 @@
    {% block content %}
          <div class="main">
           <div>
+            <h3>Bem-vindo, {{ usuario_logado }}!</h3>
+          </div>
+          <div>
             <form action="{{ url_for('csv_list', id_usuario=id_usuario) }}" id="btn-dados" method="POST">
               <input type="hidden" name="download_template" value="true">
               <button type="submit" class="btn btn-primary">Download Template CSV</button>
