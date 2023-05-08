@@ -2,7 +2,12 @@
 
    {% block content %}
          <div class="main">
-           <form action="{{ url_for('csv_list', id_usuario=id_usuario) }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+          <div>
+            <form action="{{ url_for('csv_list', id_usuario=id_usuario) }}" id="btn-dados" method="POST">
+              <input type="hidden" name="download_template" value="true">
+              <button type="submit" class="btn btn-primary">Download Template CSV</button>
+            </form>
+          <form action="{{ url_for('csv_list', id_usuario=id_usuario) }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
              <div class="mb-3">
                <label for="arquivo_csv" class="form-label">Selecione um arquivo CSV:</label>
                <div class="input-group">
@@ -11,7 +16,10 @@
                    Por favor selecione um arquivo CSV válido.
                  </div>
                </div>
-               {% with messages = get_flashed_messages(with_categories=true) %}
+             </div>
+             <button type="submit" class="btn btn-primary">Enviar</button>
+           </form>
+           {% with messages = get_flashed_messages(with_categories=true) %}
                {% if messages %}
                {% for category, message in messages %}
                <div class="alert alert-{{ category }}">
@@ -20,11 +28,6 @@
                {% endfor %}
                {% endif %}
                {% endwith %}
-             </div>
-             <button type="submit" class="btn btn-primary">Enviar</button>
-           </form>
-           <br>
-           <br>
             <div>
               <table class="table table-striped">
                 <thead>

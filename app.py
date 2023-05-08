@@ -1,4 +1,4 @@
-from flask import Flask, render_template,redirect, url_for,request,session, flash,send_file
+from flask import Flask, render_template,redirect, url_for,request,session, flash, make_response
 from werkzeug.utils import secure_filename
 from models import db, Usuario, Arquivo
 from datetime import datetime
@@ -48,10 +48,17 @@ def logout():
 
 ## download arquivo e gravar no banco de dados
 ## Listar 5 arquivos descending
-@app.route('/csv/<int:id_usuario>', methods=['GET', 'POST'])
 @app.route('/list/<int:id_usuario>', methods=['GET', 'POST'])
 def csv_list(id_usuario):
+    
     arquivos = instancia.listar_cinco_arquivos(id_usuario)
+    
+    if request.method == 'POST' and request.form.get('download_template') == 'true':
+        template = Arquivo.query.filter_by(nome_arquivo='template_analise_2023_05_07_21_46_37.csv').first()
+        response = make_response(template.arquivo_csv)
+        response.headers['Content-Disposition'] = 'attachment; filename=template_analise.csv'
+        response.headers['Content-Type'] = 'text/csv'
+        return response
 
     if request.method == 'POST':
         arquivo = request.files.get('arquivo_csv')
@@ -64,7 +71,7 @@ def csv_list(id_usuario):
         arquivo_bytes = arquivo.read()
         agora = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         arquivo_csv = arquivo.filename.split('.')[0] + '_'
-        nome_arq = secure_filename(f"{arquivo_csv}{agora}")
+        nome_arq = secure_filename(f"{arquivo_csv}{agora}.csv")
         if Arquivo.query.filter_by(nome_arquivo=nome_arq).first():
             flash('Este arquivo já foi enviado', 'error')
             return redirect(request.url)
@@ -79,12 +86,10 @@ def csv_list(id_usuario):
 # paginação e download do arquivo
 @app.route('/dashboard/<int:id_usuario>/<int:id>', methods=['GET'])
 def dashboard(id_usuario, id):
-    #verifica se o arquivo está vazio
     df = instancia.ler_ultimo_arquivo(id)
-        
     if df.empty:
         flash('O arquivo CSV está vazio', 'error')
-        return redirect(url_for('csv', id_usuario=id_usuario))
+        return redirect(url_for('csv_list', id_usuario=id_usuario))
     page = request.args.get('page', default=1, type=int)
     per_page = 5
     start_idx = (page - 1) * per_page
