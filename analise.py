@@ -97,8 +97,8 @@ class Analise:
         formandos = form.groupby(['AnoSaida']).size().to_frame().reset_index()
         formandos = formandos.rename(columns={'AnoSaida': 'Ano', 0: 'Formandos'})
         return formandos
-
-    def analise_estatistica_formado(self,arquivo):
+    
+    def analise_estatistica(self,arquivo):
         df_rep= pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','IRA'])
         df= df_rep.dropna(subset=['DATACOLACAO'])
         df.head()
@@ -111,37 +111,10 @@ class Analise:
         df.insert(3, "AnoSaida",ano_final, True)
         df.insert(4, "Tempo de Graduação",tempo_formar, True)
         dados_unicos = df.drop_duplicates().reset_index(drop=True)
-        data = dados_unicos[['Tempo de Graduação', 'IRA']]
-        descricao = data.describe().T
-        descricao = descricao.rename(columns={
-                'count': 'Total',
-                'mean': 'Média',
-                'std': 'Desvio Padrão',
-                'min': 'Mínimo',
-                '25%': '1º Quartil',
-                '50%': 'Mediana',
-                '75%': '3º Quartil',
-                'max': 'Máximo'
-            })
-        descricao = descricao.round(1)
-        return descricao
-
-    def analise_estatistica_formado_n_cotista(self,arquivo):
-        df_rep= pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','IRA'])
-        df= df_rep.dropna(subset=['DATACOLACAO'])
-        df.head()
-        ano_semestre = df.INGRESSO
-        ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
-        ano_formado = df.DATACOLACAO
-        ano_final = ano_formado.astype(str).apply(lambda x: x.split('/')[2])
-        tempo_formar = ano_final.astype(int) - ano.astype(int)
-        df.insert(2, "AnoEntrada",ano, True)
-        df.insert(3, "AnoSaida",ano_final, True)
-        df.insert(4, "Tempo de Graduação",tempo_formar, True)
-        dados_unicos = df.drop_duplicates().reset_index(drop=True)
-        dado_n_cota = dados_unicos.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")')
-        data = dado_n_cota[['Tempo de Graduação', 'IRA']]
-        descricao = data.describe().T
+        return dados_unicos
+    
+    def metrica_estatistica(self,arquivo):
+        descricao = arquivo.describe().T
         descricao = descricao.rename(columns={
                 'count': 'Total',
                 'mean': 'Média',
@@ -155,62 +128,31 @@ class Analise:
         descricao = descricao.round(1)
         return descricao
     
+    def analise_estatistica_formado(self,arquivo):
+        dado_unico = self.analise_estatistica(arquivo)
+        data = dado_unico[['Tempo de Graduação', 'IRA']]
+        analise_formando = self.metrica_estatistica(data)
+        return analise_formando
+
+    def analise_estatistica_formado_n_cotista(self,arquivo):
+        dados_unicos = self.analise_estatistica(arquivo)
+        dado_n_cota = dados_unicos.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")')
+        data = dado_n_cota[['Tempo de Graduação', 'IRA']]
+        descricao=self.metrica_estatistica(data)
+        return descricao
+    
     def analise_estatistica_formado_cotista(self,arquivo):
-        df_rep= pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','IRA'])
-        df= df_rep.dropna(subset=['DATACOLACAO'])
-        df.head()
-        ano_semestre = df.INGRESSO
-        ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
-        ano_formado = df.DATACOLACAO
-        ano_final = ano_formado.astype(str).apply(lambda x: x.split('/')[2])
-        tempo_formar = ano_final.astype(int) - ano.astype(int)
-        df.insert(2, "AnoEntrada",ano, True)
-        df.insert(3, "AnoSaida",ano_final, True)
-        df.insert(4, "Tempo de Graduação",tempo_formar, True)
-        dados_unicos = df.drop_duplicates().reset_index(drop=True)
+        dados_unicos = self.analise_estatistica(arquivo)
         dado_cota = dados_unicos.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
-        teste = dado_cota[['Tempo de Graduação', 'IRA']]
-        descricao = teste.describe().T
-        descricao = descricao.rename(columns={
-                'count': 'Total',
-                'mean': 'Média',
-                'std': 'Desvio Padrão',
-                'min': 'Mínimo',
-                '25%': '1º Quartil',
-                '50%': 'Mediana',
-                '75%': '3º Quartil',
-                'max': 'Máximo'
-            })
-        descricao = descricao.round(1)
+        data = dado_cota[['Tempo de Graduação', 'IRA']]
+        descricao = self.metrica_estatistica(data)
         return descricao
 
     def analise_estatistica_formado_outros(self,arquivo):
-        df_rep= pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','IRA'])
-        df= df_rep.dropna(subset=['DATACOLACAO'])
-        df.head()
-        ano_semestre = df.INGRESSO
-        ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
-        ano_formado = df.DATACOLACAO
-        ano_final = ano_formado.astype(str).apply(lambda x: x.split('/')[2])
-        tempo_formar = ano_final.astype(int) - ano.astype(int)
-        df.insert(2, "AnoEntrada",ano, True)
-        df.insert(3, "AnoSaida",ano_final, True)
-        df.insert(4, "Tempo de Graduação",tempo_formar, True)
-        dados_unicos = df.drop_duplicates().reset_index(drop=True)
+        dados_unicos = self.analise_estatistica(arquivo)
         dado_outros = dados_unicos.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
         data= dado_outros[['Tempo de Graduação', 'IRA']]
-        descricao = data.describe().T
-        descricao = descricao.rename(columns={
-                'count': 'Total',
-                'mean': 'Média',
-                'std': 'Desvio Padrão',
-                'min': 'Mínimo',
-                '25%': '1º Quartil',
-                '50%': 'Mediana',
-                '75%': '3º Quartil',
-                'max': 'Máximo'
-            })
-        descricao = descricao.round(1)
+        descricao = self.metrica_estatistica(data)
         return descricao
 
     def alunos_curso(self,arquivo, pagina, linhas_por_pagina):
