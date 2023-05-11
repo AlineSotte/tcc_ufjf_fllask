@@ -120,21 +120,18 @@ class Analise:
     def analise_formandos(self,arquivo):
         df_rep = pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','IRA'])
         df = df_rep.dropna(subset=['DATACOLACAO'])
-
         ano_semestre = df.INGRESSO
         ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
-
         ano_formado = df.DATACOLACAO
         ano_final = ano_formado.astype(str).apply(lambda x: x.split('/')[2])
         tempo_formar = ano_final.astype(int) - ano.astype(int)
-
         df.insert(2, "AnoEntrada",ano, True)
         df.insert(3, "AnoSaida",ano_final, True)
         df.insert(4, "TempoFormar",tempo_formar, True)
-
         dados_unicos = df.drop_duplicates().reset_index(drop=True)
         form= dados_unicos[['AnoSaida', 'ALUNO']]
-        formandos = form.groupby(['AnoSaida']).count()
-        
+        formandos = form.groupby(['AnoSaida']).size().to_frame().reset_index()
+        formandos = formandos.rename(columns={'AnoSaida': 'Ano', 0: 'Formandos'})
         return formandos
+
 
