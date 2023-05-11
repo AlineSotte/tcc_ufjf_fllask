@@ -106,9 +106,14 @@ def analise(id_usuario,id):
     situacao_aluno = instancia.mostrar_grafico_situacao_aluno(df)
     maior_reprovacao= instancia.calcular_diciplinas_maior_reprovacao(df)
     comp= instancia.mostrar_grafico_comparativo(df)
+    formandos= instancia.analise_formandos(df)
+    formandos_html = formandos.to_html(classes='table table-striped')
     data=df
     page=1
-    return render_template('analise.html', id_usuario=id_usuario,id=id,page=page,plot=situacao_aluno.to_html(full_html=False), maior_reprovacao=maior_reprovacao.to_html(classes='table table-striped'), comparativo=comp, data=data)
+    return render_template('analise.html', id_usuario=id_usuario,id=id,page=page,plot=situacao_aluno.to_html(full_html=False), 
+                           maior_reprovacao=maior_reprovacao.to_html(classes='table table-striped'),
+                           comparativo=comp, data=data, formandos=formandos_html)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

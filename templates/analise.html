@@ -9,6 +9,7 @@
             <li class="active" onclick="openTab('tab1')" data-tab="tab1">Tabela Dados</li>
             <li onclick="openTab('tab2')" data-tab="tab2">Analise Disciplina</li>
             <li onclick="openTab('tab3')" data-tab="tab3">Comparativo</li>
+            <li onclick="openTab('tab4')" data-tab="tab4">Formandos</li>
           </ul>
           
           <div class="tab active" id="tab1">
@@ -24,5 +25,10 @@
           <div class="tab" id="tab3">
             <h3>Comparativos entre cotitas ou não</h3>
             {{ comparativo|safe }}
+          </div>
+
+          <div class="tab" id="tab4">
+            <h3>Formando por ano</h3>
+            {{ formandos|safe }}
           </div>
    {% endblock %}

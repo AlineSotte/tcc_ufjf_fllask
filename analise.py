@@ -1,5 +1,5 @@
 from plotly.subplots import make_subplots
-from models import Arquivo, Usuario
+from models import Arquivo
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import pandas as pd
@@ -107,7 +107,6 @@ class Analise:
         arquivo = Arquivo.query.filter_by(id=id).first()
         dados_csv = arquivo.arquivo_csv.decode('utf-8')
         df = pd.read_csv(io.StringIO(dados_csv),sep="[,;]", decimal=',')
-        print(df.head())
         return df
     
     def pegar_id(self,arquivo):
@@ -118,4 +117,24 @@ class Analise:
         arquivos = Arquivo.query.filter_by(usuario_id=id_usuario).filter(Arquivo.nome_arquivo != 'template_analise_2023_05_07_20_53_40').order_by(Arquivo.id.desc()).limit(5).all()
         return arquivos
 
-    
+    def analise_formandos(self,arquivo):
+        df_rep = pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','IRA'])
+        df = df_rep.dropna(subset=['DATACOLACAO'])
+
+        ano_semestre = df.INGRESSO
+        ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
+
+        ano_formado = df.DATACOLACAO
+        ano_final = ano_formado.astype(str).apply(lambda x: x.split('/')[2])
+        tempo_formar = ano_final.astype(int) - ano.astype(int)
+
+        df.insert(2, "AnoEntrada",ano, True)
+        df.insert(3, "AnoSaida",ano_final, True)
+        df.insert(4, "TempoFormar",tempo_formar, True)
+
+        dados_unicos = df.drop_duplicates().reset_index(drop=True)
+        form= dados_unicos[['AnoSaida', 'ALUNO']]
+        formandos = form.groupby(['AnoSaida']).count()
+        
+        return formandos
+
