@@ -104,7 +104,8 @@ def dashboard(id_usuario, id):
     end_idx = start_idx + per_page
     data = df.iloc[start_idx:end_idx]
     num_pages = len(df) // per_page + 1
-    return render_template('dashboard.html', id_usuario=id_usuario,id=id,data=data, page=page, num_pages=num_pages)
+    return render_template('dashboard.html', id_usuario=id_usuario,id=id,data=data, 
+                           page=page, num_pages=num_pages)
 
 ## Analise ##
 @app.route('/analise/<int:id_usuario>/<int:id>', methods=['GET'])
@@ -112,14 +113,29 @@ def analise(id_usuario,id):
     df = instancia.ler_ultimo_arquivo(id)
     situacao_aluno = instancia.mostrar_grafico_situacao_aluno(df)
     maior_reprovacao= instancia.calcular_diciplinas_maior_reprovacao(df)
+    maior_reprovacao_html=maior_reprovacao.to_html(classes='table table-striped')
     comp= instancia.mostrar_grafico_comparativo(df)
     formandos= instancia.analise_formandos(df)
     formandos_html = formandos.to_html(classes='table table-striped')
-    data=df
+    analise_formando= instancia.analise_estatistica_formado(df)
+    analise_formando_html= analise_formando.to_html(classes='table table-strip')
     page=1
-    return render_template('analise.html', id_usuario=id_usuario,id=id,page=page,plot=situacao_aluno.to_html(full_html=False), 
-                           maior_reprovacao=maior_reprovacao.to_html(classes='table table-striped'),
-                           comparativo=comp, data=data, formandos=formandos_html)
+    cont_page=10
+    data=df
+    filtro = request.args.get('filtro')
+    print(filtro)
+    busca_aluno= instancia.filtro_alunos(df,filtro,id,page,cont_page)
+    analise_cotista = instancia.analise_estatistica_formado_cotista(df).to_html(classes='table table-strip')
+    analise_n_cotista = instancia.analise_estatistica_formado_n_cotista(df).to_html(classes='table table-strip')
+    analise_outro = instancia.analise_estatistica_formado_outros(df).to_html(classes='table table-strip')
+    return render_template('analise.html', id_usuario=id_usuario,id=id,page=page,
+                           plot=situacao_aluno.to_html(full_html=False), 
+                           maior_reprovacao=maior_reprovacao_html,
+                           comparativo=comp, data=data, formandos=formandos_html,
+                           analise_form=analise_formando_html,
+                           busca_aluno=busca_aluno, analise_n_cotista=analise_n_cotista,
+                           analise_cotista=analise_cotista, analise_outro=analise_outro
+                           )
 
 
 if __name__ == '__main__':
