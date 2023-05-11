@@ -19,6 +19,15 @@
 					<input type="password" id="password" name="password"><br><br>
 					<input type="submit" value="Login">
 				</form>
+				{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+				{% for category, message in messages %}
+				<div class="alert alert-{{ category }}">
+				  {{ message }}
+				</div>
+				{% endfor %}
+				{% endif %}
+				{% endwith %}
 			</div>
 		</div>
 	</div>

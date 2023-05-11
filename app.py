@@ -34,10 +34,17 @@ def login():
     if request.method == 'POST':
         email = request.form['username']
         password = request.form['password']
-        user = db.session.query(Usuario).filter_by(email=email).first()
-        if user.email==email and user.senha==password:
-            session['username'] = request.form['username']
-            return redirect(url_for('csv_list',id_usuario=user.id))
+        if email != '' and password != '':
+            user = db.session.query(Usuario).filter_by(email=email).first()
+            if user.email==email and user.senha==password:
+                    session['username'] = request.form['username']
+                    return redirect(url_for('csv_list',id_usuario=user.id))
+            else:
+                flash('E-mail ou senha incorretos', 'error')
+                return redirect(request.url)
+        else:
+            flash('Preencha seu e-mail e senha', 'error')
+            return redirect(request.url)
     else:
         return render_template('login.html')
 
