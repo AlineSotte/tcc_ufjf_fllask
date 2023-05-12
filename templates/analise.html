@@ -59,7 +59,15 @@
 <div class="tab" id="tab2">{{ plot|safe }}</div>
 <div class="tab" id="tab3">
   <h6>Disicplinas que mais reprovam no curso de graduação analisado</h6>
-  {{maior_reprovacao|safe}}
+  <div>
+    <form method="GET" action="{{ url_for('analise', id_usuario=id_usuario,id=id)}}">
+      <label for="filtro_ano">Filtro Ano:</label>
+      <input type="text" id="filtro_ano" name="filtro_ano" placeholder="Ex:2012">
+      <button type="submit" class="btn btn-primary">Buscar</button>
+      <button type="submit" class="btn btn-primary">Limpar Busca</button>
+    </form>
+    {{maior_reprovacao|safe}}
+  </div>
 </div>
 <div class="tab" id="tab4">
   <h6>Gráfico comparativo</h6>

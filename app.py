@@ -112,7 +112,8 @@ def dashboard(id_usuario, id):
 def analise(id_usuario,id):
     df = instancia.ler_ultimo_arquivo(id)
     situacao_aluno = instancia.mostrar_grafico_situacao_aluno(df)
-    maior_reprovacao= instancia.calcular_diciplinas_maior_reprovacao(df)
+    filtro_ano = request.args.get('filtro_ano')
+    maior_reprovacao= instancia.filtro_reprovacao(df,filtro_ano)
     maior_reprovacao_html=maior_reprovacao.to_html(classes='table table-striped')
     comp= instancia.mostrar_grafico_comparativo(df)
     formandos= instancia.analise_formandos(df)
@@ -123,7 +124,6 @@ def analise(id_usuario,id):
     cont_page=10
     data=df
     filtro = request.args.get('filtro')
-    print(filtro)
     busca_aluno= instancia.filtro_alunos(df,filtro,id,page,cont_page)
     analise_cotista = instancia.analise_estatistica_formado_cotista(df).to_html(classes='table table-strip')
     analise_n_cotista = instancia.analise_estatistica_formado_n_cotista(df).to_html(classes='table table-strip')

@@ -12,40 +12,37 @@ class Analise:
         arquivo_csv= arquivo
         df2 = pd.DataFrame(arquivo_csv, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','DATAENCERRAMENTO','IRA','CURRICULO','CARGA_HOR'])
         dados_unicos = df2.drop_duplicates().reset_index(drop=True)
-
         agrupamento_dados = dados_unicos.groupby(['SITUACAO_ALUNO']).size()\
         .sort_values(ascending=False) \
         .reset_index(name='TOTAL_SITUACAO_ALUNO') 
-
         fig = make_subplots(rows=1, cols=1)
         fig.add_trace(go.Bar(x=agrupamento_dados['SITUACAO_ALUNO'], y=agrupamento_dados['TOTAL_SITUACAO_ALUNO']), row=1, col=1)
         fig.update_layout(title='Contagem da Situação dos Alunos', xaxis_title='Situação Aluno', yaxis_title='Total por Situação dos Alunos')
-
         return fig
-
+    
+    def ler_ultimo_arquivo(self,id):
+        arquivo = Arquivo.query.filter_by(id=id).first()
+        dados_csv = arquivo.arquivo_csv.decode('utf-8')
+        df = pd.read_csv(io.StringIO(dados_csv),sep="[,;]", decimal=',')
+        return df
+    
     def mostrar_grafico_comparativo(self,arquivo):
         arquivo_csv= arquivo
-
         df2 = pd.DataFrame(arquivo_csv, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','DATAENCERRAMENTO','IRA','CURRICULO','CARGA_HOR'])
         dados_unicos = df2.drop_duplicates().reset_index(drop=True)
-
         dado_n_cota = dados_unicos.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")').groupby(['SITUACAO_ALUNO']).size()\
         .sort_values(ascending=False) \
         .reset_index(name='TOTAL') 
         dado_n_cota ['Tipo'] = pd.Series(['N_Cota' for x in range(len(dado_n_cota.index))])
-
         dado_outros = dados_unicos.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['SITUACAO_ALUNO']).size()\
         .sort_values(ascending=False) \
         .reset_index(name='TOTAL') 
         dado_outros['Tipo'] = pd.Series(['Outros' for x in range(len(dado_outros.index))])
-
         dado_cota = dados_unicos.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['SITUACAO_ALUNO']).size()\
         .sort_values(ascending=False) \
         .reset_index(name='TOTAL') 
-        
         dado_cota['Tipo'] = pd.Series(['Cota' for x in range(len(dado_cota.index))])
         df=pd.concat([dado_n_cota,dado_cota,dado_outros])
-        
         trace1 = go.Bar(x=df[(df['Tipo'] == 'Cota')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'Cota')]['TOTAL'],
                         name='Cotista', marker=dict(color='#2ecc71'))
         trace2 = go.Bar(x=df[(df['Tipo'] == 'N_Cota')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'N_Cota')]['TOTAL'],
@@ -59,7 +56,6 @@ class Analise:
                         barmode='group')
         fig = go.Figure(data=data, layout=layout)
         plot_div = fig.to_html(full_html=False)
-        
         return plot_div
 
 
@@ -71,13 +67,30 @@ class Analise:
             .sort_values(ascending=False) \
             .reset_index(name='TOTAL_REPROVACAO') 
         return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
-        
-    def ler_ultimo_arquivo(self,id):
-        arquivo = Arquivo.query.filter_by(id=id).first()
-        dados_csv = arquivo.arquivo_csv.decode('utf-8')
-        df = pd.read_csv(io.StringIO(dados_csv),sep="[,;]", decimal=',')
-        return df
     
+    def calcular_diciplinas_maior_reprovacao_ano(self,arquivo,ano):
+        df_rep= pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DISCIPLINA','PERIODO', 'NOTA','SITUACAO_DISCIPLINA'])
+        reprovacao_disciplina= df_rep.query('SITUACAO_DISCIPLINA in ("Reprovado","Rep Nota")')
+        ano_semestre = reprovacao_disciplina.PERIODO
+        ano_materia = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
+        reprovacao_disciplina.insert(reprovacao_disciplina.shape[1]-1, "AnoDisciplina",ano_materia, True)
+        reprovacao_disciplina['AnoDisciplina'] = reprovacao_disciplina['AnoDisciplina'].astype(str)
+        print(reprovacao_disciplina.columns)
+        busca_ano = reprovacao_disciplina[reprovacao_disciplina['AnoDisciplina'].str.contains(ano)].reset_index(drop=True)
+        agrupamento_dados_rep = busca_ano.groupby(['DISCIPLINA']).size()\
+            .sort_values(ascending=False) \
+            .reset_index(name='TOTAL_REPROVACAO') 
+        return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
+
+    
+    def filtro_reprovacao(self,arquivo,filtro):
+        if filtro != None:
+            rep_ano = self.calcular_diciplinas_maior_reprovacao_ano(arquivo,filtro)
+            return rep_ano
+        else:
+            alunos = self.calcular_diciplinas_maior_reprovacao(arquivo)
+            return alunos
+        
     def pegar_id(self,arquivo):
         arq = Arquivo.query.filter_by(nome_arquivo=arquivo).first()
         return arq.id
@@ -101,7 +114,6 @@ class Analise:
     def analise_estatistica(self,arquivo):
         df_rep= pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DATACOLACAO','IRA'])
         df= df_rep.dropna(subset=['DATACOLACAO'])
-        df.head()
         ano_semestre = df.INGRESSO
         ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
         ano_formado = df.DATACOLACAO
