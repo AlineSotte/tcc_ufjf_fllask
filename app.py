@@ -108,6 +108,17 @@ def dashboard(id_usuario, id):
                            page=page, num_pages=num_pages)
 
 ## Analise ##
+@app.route('/teste/<int:id_usuario>/<int:id>', methods=['GET'])
+def teste(id_usuario,id):
+    df = instancia.ler_ultimo_arquivo(id)
+    meu_valor_padrao=''
+    filtro_ano = request.args.get('filtro_ano',meu_valor_padrao)
+    selecionados = request.args.get('termo',meu_valor_padrao)
+    maior_reprovacao= instancia.filtro_reprovacao(df,filtro_ano,selecionados)
+    maior_reprovacao_html=maior_reprovacao.to_html(classes='table table-striped')
+    return render_template('teste.html',id_usuario=id_usuario,id=id,
+                           maior_reprovacao=maior_reprovacao_html, meu_valor_padrao=meu_valor_padrao)
+
 @app.route('/analise/<int:id_usuario>/<int:id>', methods=['GET'])
 def analise(id_usuario,id):
     df = instancia.ler_ultimo_arquivo(id)

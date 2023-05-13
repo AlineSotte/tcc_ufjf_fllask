@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block content %}
+<div>
+  <h6>Disicplinas que mais reprovam no curso de graduação analisado</h6>
+  <div>
+    <form method="GET" action="{{ url_for('teste', id_usuario=id_usuario,id=id)}}">
+      <label for="filtro_ano">Filtro Ano:</label>
+      <input type="text" id="filtro_ano" name="filtro_ano" value="{{ meu_valor_padrao }}" placeholder="Ex:2012"
+        pattern="\d{4}" title="Por favor, insira um ano válido de 4 dígitos">
+      <label for="termo" value="{{ meu_valor_padrao }}">Tipo Ingresso:</label>
+      <select id="termo" name="termo">
+        <option value="{{ meu_valor_padrao }}" selected/>Todos</option>
+        <option value="cotista">Cotista</option>
+        <option value="nao-cotista">Não cotista</option>
+        <option value="outros">Outros</option>
+      </select>
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    {{maior_reprovacao|safe}}
+  </div>
+</div>
+{% endblock %}
