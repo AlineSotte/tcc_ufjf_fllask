@@ -53,15 +53,24 @@
 </div>
 <div>
   {% if page > 1 %}
-  <a href="{{ url_for('analise', id_usuario=id_usuario,id=id,page=page-1) }}">Anterior</a>
+  <a href="{{ url_for('analise', id_usuario=id_usuario, id=id, page=page-1, filtro=request.args.get('filtro'), situacao=request.args.get('situacao')) }}">Anterior</a>
   {% else %}
   <a class="disabled">Anterior</a>
   {% endif %}
+  
   {% if page < num_pages %}
-  <a href="{{ url_for('analise',id_usuario=id_usuario,id=id,page=page+1) }}">Próxima</a>
+  <a href="{{ url_for('analise', id_usuario=id_usuario, id=id, page=page+1, filtro=request.args.get('filtro'), situacao=request.args.get('situacao')) }}">Próxima</a>
   {% else %}
   <a class="disabled">Próxima</a>
   {% endif %}
+  
 </div>
+
+<script>
+  var filtro= "{{ request.args.get('filtro', '') }}";
+  var situacao = "{{ request.args.get('situacao', '') }}";
+  document.getElementById("filtro").value = filtro;
+  document.getElementById("situacao").value = situacao;
+</script>
 
 {% endblock %}

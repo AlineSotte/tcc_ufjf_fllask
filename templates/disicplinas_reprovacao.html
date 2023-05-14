@@ -18,4 +18,11 @@
     {{maior_reprovacao|safe}}
   </div>
 </div>
+
+<script>
+  var filtro_ano = "{{ request.args.get('filtro_ano', '') }}";
+  var termo = "{{ request.args.get('termo', '') }}";
+  document.getElementById("filtro_ano").value = filtro_ano;
+  document.getElementById("termo").value = termo;
+</script>
 {% endblock %}
