@@ -17,11 +17,6 @@
         Alunos Graduação
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link"
-      href="{{ url_for('disicplinas_reprovacao', id_usuario=id_usuario,id=id) }}"
-      > Analise Disciplina Reprovação</a
-    >
     </li>
     <li class="nav-item">
       <a class="nav-link"
@@ -41,6 +36,11 @@
       > Analise Formandos</a
     >
     </li>
+    <li class="nav-item">
+      <a class="nav-link"
+      href="{{ url_for('disicplinas_reprovacao', id_usuario=id_usuario,id=id) }}"
+      > Analise Disciplina Reprovação</a
+    >
   </ul>
   {% block content2%} {% endblock %}
 </div>
