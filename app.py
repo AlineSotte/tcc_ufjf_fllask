@@ -4,7 +4,7 @@ from models import db, Usuario, Arquivo
 from datetime import datetime
 from analise import Analise
 from config import Config
-
+import math
 
 app = Flask(__name__, static_folder='static')
 
@@ -123,14 +123,42 @@ def disicplinas_reprovacao(id_usuario,id):
 def analise(id_usuario,id):
     df = instancia.ler_ultimo_arquivo(id)
     meu_valor_padrao=''
-    page=1
-    cont_page=10
     filtro = request.args.get('filtro',meu_valor_padrao)
     situacao_aluno = request.args.get('situacao',meu_valor_padrao)
-    busca_aluno= instancia.filtro_alunos(df,filtro,id,page,cont_page,situacao_aluno)
+    busca_aluno= instancia.filtro_alunos(df,filtro,situacao_aluno)
+    page = request.args.get('page', default=1, type=int)
+    per_page = 5
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    num_pages = math.ceil(len(busca_aluno) / per_page)
+    filtro_pagina = busca_aluno.iloc[start_idx:end_idx]
     return render_template('analise.html', id_usuario=id_usuario,id=id,page=page,
-                           busca_aluno=busca_aluno, meu_valor_padrao=meu_valor_padrao)
+                           busca_aluno=busca_aluno, meu_valor_padrao=meu_valor_padrao,
+                           data=filtro_pagina,num_pages=num_pages,per_page=per_page)
 
+@app.route('/grafico_comparativo/<int:id_usuario>/<int:id>', methods=['GET'])
+def grafico_comparativo(id_usuario,id):
+    df = instancia.ler_ultimo_arquivo(id)
+    grafico = instancia.mostrar_grafico_comparativo(df)
+    return render_template('grafico_comparativo.html', id_usuario=id_usuario,
+                           id=id, grafico=grafico)
+
+@app.route('/grafico_situacao_aluno/<int:id_usuario>/<int:id>', methods=['GET'])
+def grafico_situacao_aluno(id_usuario,id):
+    df = instancia.ler_ultimo_arquivo(id)
+    grafico = instancia.mostrar_grafico_situacao_aluno(df).to_html(full_html=False)
+    return render_template('grafico_situacao_aluno.html', id_usuario=id_usuario,
+                           id=id, grafico=grafico)
+
+@app.route('/analise_formandos/<int:id_usuario>/<int:id>', methods=['GET'])
+def analise_formandos(id_usuario,id):
+    df = instancia.ler_ultimo_arquivo(id)
+    analise = instancia.analise_estatistica_formando(df).to_html(classes='table table-strip')
+    analise2= instancia.analise_estatistica_formando_cotista(df).to_html(classes='table table-strip')
+    analise3 = instancia.analise_estatistica_formando_n_cotista(df).to_html(classes='table table-strip')
+    analise4 = instancia.analise_estatistica_formando_outros(df).to_html(classes='table table-strip')
+    return render_template('analise_formandos.html', id_usuario=id_usuario,id=id,
+                           analise=analise,analise2=analise2,analise3=analise3,analise4=analise4)
 
 
 if __name__ == '__main__':

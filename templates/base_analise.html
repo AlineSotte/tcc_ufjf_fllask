@@ -24,7 +24,22 @@
     >
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#">Link</a>
+      <a class="nav-link"
+      href="{{ url_for('grafico_situacao_aluno', id_usuario=id_usuario,id=id) }}"
+      > Grafico Situação Aluno</a
+    >
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"
+      href="{{ url_for('grafico_comparativo', id_usuario=id_usuario,id=id) }}"
+      > Grafico Comparativo</a
+    >
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"
+      href="{{ url_for('analise_formandos', id_usuario=id_usuario,id=id) }}"
+      > Analise Formandos</a
+    >
     </li>
   </ul>
   {% block content2%} {% endblock %}

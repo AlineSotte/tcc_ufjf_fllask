@@ -35,7 +35,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for index,aluno in busca_aluno.iterrows()%}
+        {% for index,aluno in data.iterrows() %}
         <tr>
           <td>{{ aluno['INGRESSO'] }}</td>
           <td>{{ aluno['ALUNO'] }}</td>
@@ -50,6 +50,18 @@
       </tbody>
     </table>
   </div>
+</div>
+<div>
+  {% if page > 1 %}
+  <a href="{{ url_for('analise', id_usuario=id_usuario,id=id,page=page-1) }}">Anterior</a>
+  {% else %}
+  <a class="disabled">Anterior</a>
+  {% endif %}
+  {% if page < num_pages %}
+  <a href="{{ url_for('analise',id_usuario=id_usuario,id=id,page=page+1) }}">Próxima</a>
+  {% else %}
+  <a class="disabled">Próxima</a>
+  {% endif %}
 </div>
 
 {% endblock %}
