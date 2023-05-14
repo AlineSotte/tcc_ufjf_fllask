@@ -211,18 +211,77 @@ class Analise:
         dados_paginados = dados_unicos.iloc[inicio:fim]
         return dados_paginados
     
-    def pegar_aluno(self,id_arquivo,nome_aluno):
+    def pegar_aluno(self,id_arquivo,nome_aluno,situacao_aluno):
         arquivo = self.ler_ultimo_arquivo(id_arquivo)
         if arquivo['ALUNO'].dtype != 'object':
             arquivo['ALUNO'] = arquivo['ALUNO'].astype(str)
-        busca_arquivo = arquivo.loc[arquivo['ALUNO'].str.contains(nome_aluno)]
-        cont_alunos = busca_arquivo.shape[0]
-        aplica_paginacao = self.alunos_curso(busca_arquivo, 1, cont_alunos)
-        return aplica_paginacao
-    
-    def filtro_alunos(self,arquivo,filtro,id,page,cont_page):
-        if filtro != None:
-            busca_aluno = self.pegar_aluno(id,filtro)
+        if nome_aluno != '' and situacao_aluno == '':
+            busca_arquivo =  arquivo[arquivo['ALUNO'].str.contains(nome_aluno)].reset_index(drop=True)
+            cont_alunos = busca_arquivo.shape[0]
+            return  self.alunos_curso(busca_arquivo, 1, cont_alunos)
+        elif nome_aluno == '' and situacao_aluno !='':
+            if situacao_aluno == 'ativo':
+                arquivo_situacao = arquivo[arquivo['SITUACAO_ALUNO'] == 'Ativo']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'trancado':
+                arquivo_situacao = arquivo[arquivo['SITUACAO_ALUNO'] == 'Trancado']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'cancelado':
+                arquivo_situacao = arquivo[arquivo['SITUACAO_ALUNO'] == 'Cancelado']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'jubilado':
+                arquivo_situacao = arquivo[arquivo['SITUACAO_ALUNO'] == 'Jubilado']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'concluido':
+                arquivo_situacao = arquivo[arquivo['SITUACAO_ALUNO'] == 'Concluido']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'transferido':
+                arquivo_situacao = arquivo[arquivo['SITUACAO_ALUNO'] == 'Transferido']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            else:
+                arquivo_situacao = arquivo[arquivo['SITUACAO_ALUNO'] == 'Suspensăo']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+        else: 
+            busca_arquivo =  arquivo[arquivo['ALUNO'].str.contains(nome_aluno)].reset_index(drop=True)
+            if situacao_aluno == 'ativo':
+                arquivo_situacao = busca_arquivo[busca_arquivo['SITUACAO_ALUNO'] == 'Ativo']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'trancado':
+                arquivo_situacao = busca_arquivo[busca_arquivo['SITUACAO_ALUNO'] == 'Trancado']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'cancelado':
+                arquivo_situacao = busca_arquivo[busca_arquivo['SITUACAO_ALUNO'] == 'Cancelado']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'jubilado':
+                arquivo_situacao = busca_arquivo[busca_arquivo['SITUACAO_ALUNO'] == 'Jubilado']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'concluido':
+                arquivo_situacao = busca_arquivo[busca_arquivo['SITUACAO_ALUNO'] == 'Concluido']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            elif situacao_aluno == 'transferido':
+                arquivo_situacao = busca_arquivo[busca_arquivo['SITUACAO_ALUNO'] == 'Transferido']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            else:
+                arquivo_situacao = busca_arquivo[busca_arquivo['SITUACAO_ALUNO'] == 'Suspensăo']
+                cont_alunos = arquivo_situacao.shape[0]
+                return  self.alunos_curso(arquivo_situacao, 1, cont_alunos)
+            
+    def filtro_alunos(self,arquivo,filtro,id,page,cont_page,situacao_aluno):
+        if filtro != '' or situacao_aluno != '':
+            busca_aluno = self.pegar_aluno(id,filtro,situacao_aluno)
             return busca_aluno
         else:
             alunos = self.alunos_curso(arquivo,page,cont_page)

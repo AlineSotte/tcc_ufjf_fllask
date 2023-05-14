@@ -1,96 +1,55 @@
-{% extends "base.html" %} {% block content %}
-<div class="main">
-  <div class="d-flex justify-content-between align-items-center" id="btn-dados">
-    <a
-      href="{{ url_for('dashboard', id_usuario=id_usuario,id=id, page=1)}}"
-      class="btn btn-primary"
-    >
-      Dados Gerais</a
-    >
-  </div>
-  <ul class="tab-menu">
-    <li class="active" onclick="openTab('tab1')" data-tab="tab1">Alunos</li>
-    <li onclick="openTab('tab2')" data-tab="tab2">Situação Aluno</li>
-    <li onclick="openTab('tab3')" data-tab="tab3">Análise Disciplina</li>
-    <li onclick="openTab('tab4')" data-tab="tab4">Comparativo</li>
-    <li onclick="openTab('tab5')" data-tab="tab5">Formandos</li>
-    <li onclick="openTab('tab6')" data-tab="tab6">Análise Evasão</li>
-  </ul>
-  <div class="tab active" id="tab1">
-    <div>
-      <form method="GET" action="{{ url_for('analise', id_usuario=id_usuario,id=id)}}">
-        <label for="filtro">Filtro Aluno:</label>
-        <input type="text" id="filtro" name="filtro">
-        <button type="submit" class="btn btn-primary">Buscar</button>
-        <button type="submit" class="btn btn-primary">Limpar Busca</button>
-      </form>
-    </div>
-    <div id="scroll-tabela">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Ingresso</th>
-            <th>Aluno</th>
-            <th>Tipo de Ingresso</th>
-            <th>Situação do Aluno</th>
-            <th>Data de Colação</th>
-            <th>Data de Encerramento</th>
-            <th>IRA</th>
-            <th>Carga Horária</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for index,aluno in busca_aluno.iterrows()%}
-          <tr>
-            <td>{{ aluno['INGRESSO'] }}</td>
-            <td>{{ aluno['ALUNO'] }}</td>
-            <td>{{ aluno['TIPOINGRESSO'] }}</td>
-            <td>{{ aluno['SITUACAO_ALUNO'] }}</td>
-            <td>{{ aluno['DATACOLACAO'] }}</td>
-            <td>{{ aluno['DATAENCERRAMENTO'] }}</td>
-            <td>{{ aluno['IRA'] }}</td>
-            <td>{{ aluno['CARGA_HOR'] }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-</div>
-<div class="tab" id="tab2">{{ plot|safe }}</div>
-<div class="tab" id="tab3">
-  <h6>Disicplinas que mais reprovam no curso de graduação analisado</h6>
+{% extends "base_analise.html" %} {% block content2 %}
   <div>
-    <form method="GET" action="{{ url_for('analise', id_usuario=id_usuario,id=id)}}">
-      <label for="filtro_ano">Filtro Ano:</label>
-      <input type="text" id="filtro_ano" name="filtro_ano" placeholder="Ex:2012">
+    <form
+      method="GET"
+      action="{{ url_for('analise', id_usuario=id_usuario,id=id)}}"
+    >
+      <label for="filtro" value="{{ meu_valor_padrao }}">Filtro Aluno:</label>
+      <input type="text" id="filtro" name="filtro" value="{{ meu_valor_padrao }}" />
+      <label for="situacao" value="{{ meu_valor_padrao }}">Situação Aluno:</label>
+      <select id="situacao" name="situacao">
+        <option value="{{ meu_valor_padrao }}" selected/>Todos</option>
+        <option value="ativo">Ativo</option>
+        <option value="trancado">Trancado</option>
+        <option value="cancelado">Cancelado</option>
+        <option value="jubilado">jubilado</option>
+        <option value="concluido">Concluído</option>
+        <option value="transferido">Transferido</option>
+        <option value="suspenso">Suspensao</option>
+      </select>      
       <button type="submit" class="btn btn-primary">Buscar</button>
-      <button type="submit" class="btn btn-primary">Limpar Busca</button>
     </form>
-    {{maior_reprovacao|safe}}
+  </div>
+  <div id="scroll-tabela">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Ingresso</th>
+          <th>Aluno</th>
+          <th>Tipo de Ingresso</th>
+          <th>Situação do Aluno</th>
+          <th>Data de Colação</th>
+          <th>Data de Encerramento</th>
+          <th>IRA</th>
+          <th>Carga Horária</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for index,aluno in busca_aluno.iterrows()%}
+        <tr>
+          <td>{{ aluno['INGRESSO'] }}</td>
+          <td>{{ aluno['ALUNO'] }}</td>
+          <td>{{ aluno['TIPOINGRESSO'] }}</td>
+          <td>{{ aluno['SITUACAO_ALUNO'] }}</td>
+          <td>{{ aluno['DATACOLACAO'] }}</td>
+          <td>{{ aluno['DATAENCERRAMENTO'] }}</td>
+          <td>{{ aluno['IRA'] }}</td>
+          <td>{{ aluno['CARGA_HOR'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
-<div class="tab" id="tab4">
-  <h6>Gráfico comparativo</h6>
-  {{ comparativo|safe }}
-</div>
-<div class="tab" id="tab5">
-  <h6>Formandos por ano</h6>
-  {{ formandos|safe }}
-  <br/>
-  <h6>Analise Estatistica Formandos</h6>
-  {{ analise_form|safe }}
-  <br/>
-  <h6>Analise Estatistica Formandos Não Cotista</h6>
-  {{ analise_n_cotista|safe }}
-  <br/>
-  <h6>Analise Estatistica Formandos Cotista</h6>
-  {{ analise_cotista|safe }}
-  <br/>
-  <h6>Analise Estatistica Formandos Outros</h6>
-  {{ analise_outro|safe }}
-  <br/>
-</div>
-<div class="tab" id="tab6">
-  <h6>Analise Evasão</h6>
-</div>
+
 {% endblock %}

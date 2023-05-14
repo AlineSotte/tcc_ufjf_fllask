@@ -108,45 +108,29 @@ def dashboard(id_usuario, id):
                            page=page, num_pages=num_pages)
 
 ## Analise ##
-@app.route('/teste/<int:id_usuario>/<int:id>', methods=['GET'])
-def teste(id_usuario,id):
+@app.route('/disciplina_reprovacao/<int:id_usuario>/<int:id>', methods=['GET'])
+def disicplinas_reprovacao(id_usuario,id):
     df = instancia.ler_ultimo_arquivo(id)
     meu_valor_padrao=''
     filtro_ano = request.args.get('filtro_ano',meu_valor_padrao)
     selecionados = request.args.get('termo',meu_valor_padrao)
     maior_reprovacao= instancia.filtro_reprovacao(df,filtro_ano,selecionados)
     maior_reprovacao_html=maior_reprovacao.to_html(classes='table table-striped')
-    return render_template('teste.html',id_usuario=id_usuario,id=id,
+    return render_template('disicplinas_reprovacao.html',id_usuario=id_usuario,id=id,
                            maior_reprovacao=maior_reprovacao_html, meu_valor_padrao=meu_valor_padrao)
 
 @app.route('/analise/<int:id_usuario>/<int:id>', methods=['GET'])
 def analise(id_usuario,id):
     df = instancia.ler_ultimo_arquivo(id)
-    situacao_aluno = instancia.mostrar_grafico_situacao_aluno(df)
-    filtro_ano = request.args.get('filtro_ano')
-    maior_reprovacao= instancia.filtro_reprovacao(df,filtro_ano)
-    maior_reprovacao_html=maior_reprovacao.to_html(classes='table table-striped')
-    comp= instancia.mostrar_grafico_comparativo(df)
-    formandos= instancia.analise_formandos(df)
-    formandos_html = formandos.to_html(classes='table table-striped')
-    analise_formando= instancia.analise_estatistica_formado(df)
-    analise_formando_html= analise_formando.to_html(classes='table table-strip')
+    meu_valor_padrao=''
     page=1
     cont_page=10
-    data=df
-    filtro = request.args.get('filtro')
-    busca_aluno= instancia.filtro_alunos(df,filtro,id,page,cont_page)
-    analise_cotista = instancia.analise_estatistica_formado_cotista(df).to_html(classes='table table-strip')
-    analise_n_cotista = instancia.analise_estatistica_formado_n_cotista(df).to_html(classes='table table-strip')
-    analise_outro = instancia.analise_estatistica_formado_outros(df).to_html(classes='table table-strip')
+    filtro = request.args.get('filtro',meu_valor_padrao)
+    situacao_aluno = request.args.get('situacao',meu_valor_padrao)
+    busca_aluno= instancia.filtro_alunos(df,filtro,id,page,cont_page,situacao_aluno)
     return render_template('analise.html', id_usuario=id_usuario,id=id,page=page,
-                           plot=situacao_aluno.to_html(full_html=False), 
-                           maior_reprovacao=maior_reprovacao_html,
-                           comparativo=comp, data=data, formandos=formandos_html,
-                           analise_form=analise_formando_html,
-                           busca_aluno=busca_aluno, analise_n_cotista=analise_n_cotista,
-                           analise_cotista=analise_cotista, analise_outro=analise_outro
-                           )
+                           busca_aluno=busca_aluno, meu_valor_padrao=meu_valor_padrao)
+
 
 
 if __name__ == '__main__':

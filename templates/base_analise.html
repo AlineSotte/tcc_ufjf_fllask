@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block content%}
+<div class="main">
+  <div class="d-flex justify-content-between align-items-center" id="btn-dados">
+    <a
+      href="{{ url_for('dashboard', id_usuario=id_usuario,id=id, page=1)}}"
+      class="btn btn-primary"
+    >
+      Dados Gerais</a
+    >
+  </div>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" 
+      aria-current="page"     
+      href="{{ url_for('analise', id_usuario=id_usuario,id=id) }}"
+      >
+        Alunos Graduação
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"
+      href="{{ url_for('disicplinas_reprovacao', id_usuario=id_usuario,id=id) }}"
+      > Analise Disciplina Reprovação</a
+    >
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Link</a>
+    </li>
+  </ul>
+  {% block content2%} {% endblock %}
+</div>
+
+{% endblock %}
