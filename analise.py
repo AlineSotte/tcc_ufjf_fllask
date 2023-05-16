@@ -148,8 +148,8 @@ class Analise:
                 .sort_values(ascending=False) \
                 .reset_index(name='TOTAL_REPROVACAO') 
                 return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
-        
-            
+        else:
+            return self.calcular_diciplinas_maior_reprovacao(arquivo)
             
     def filtro_reprovacao(self,arquivo,filtro,situacao,periodo):
         if filtro!= '' or situacao != '' or periodo !='':
