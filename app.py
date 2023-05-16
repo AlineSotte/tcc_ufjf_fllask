@@ -114,7 +114,8 @@ def disicplinas_reprovacao(id_usuario,id):
     meu_valor_padrao=''
     filtro_ano = request.args.get('filtro_ano',meu_valor_padrao)
     selecionados = request.args.get('termo',meu_valor_padrao)
-    maior_reprovacao= instancia.filtro_reprovacao(df,filtro_ano,selecionados)
+    periodo = request.args.get('filtro_periodo',meu_valor_padrao)
+    maior_reprovacao= instancia.filtro_reprovacao(df,filtro_ano,selecionados,periodo)
     maior_reprovacao_html=maior_reprovacao.to_html(classes='table table-striped')
     return render_template('disicplinas_reprovacao.html',id_usuario=id_usuario,id=id,
                            maior_reprovacao=maior_reprovacao_html, meu_valor_padrao=meu_valor_padrao)
@@ -159,7 +160,18 @@ def analise_formandos(id_usuario,id):
     analise4 = instancia.analise_estatistica_formando_outros(df).to_html(classes='table table-strip')
     return render_template('analise_formandos.html', id_usuario=id_usuario,id=id,
                            analise=analise,analise2=analise2,analise3=analise3,analise4=analise4)
+    
+@app.route('/analise_evasao/<int:id_usuario>/<int:id>', methods=['GET'])
+def analise_evasao(id_usuario, id):
+        return render_template('analise_evasao.html', id_usuario=id_usuario, id=id)
+    
+@app.route('/analise_retidos/<int:id_usuario>/<int:id>', methods=['GET'])
+def analise_retidos(id_usuario, id):
+        return render_template('analise_evasao.html', id_usuario=id_usuario, id=id)
 
+@app.route('/matricula_periodo/<int:id_usuario>/<int:id>', methods=['GET'])
+def matricula_periodo(id_usuario, id):
+        return render_template('analise_evasao.html', id_usuario=id_usuario, id=id)
 
 if __name__ == '__main__':
     app.run(debug=True)

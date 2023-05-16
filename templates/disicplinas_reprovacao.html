@@ -1,28 +1,53 @@
-{% extends "base_analise.html" %} {% block content2 %}
+{% extends "base_analise.html" %}
+{% block content2 %}
 <div>
-  <h6>Disicplinas que mais reprovam no curso de graduação analisado</h6>
+  <h6>Disciplinas que mais reprovam no curso de graduação analisado</h6>
   <div>
-    <form method="GET" action="{{ url_for('disicplinas_reprovacao', id_usuario=id_usuario,id=id)}}">
-      <label for="filtro_ano" value="{{ meu_valor_padrao }}">Filtro Ano:</label>
-      <input type="text" id="filtro_ano" name="filtro_ano" value="{{ meu_valor_padrao }}" placeholder="Ex:2012"
-        pattern="\d{4}" title="Por favor, insira um ano válido de 4 dígitos">
-      <label for="termo" value="{{ meu_valor_padrao }}">Tipo Ingresso:</label>
+    <form method="GET" action="{{ url_for('disicplinas_reprovacao', id_usuario=id_usuario, id=id)}}">
+      <label for="filtro_ano">Filtro Ano:</label>
+      <input type="text" id="filtro_ano" name="filtro_ano" value="{{ meu_valor_padrao }}" placeholder="Ex: 2012"
+             pattern="\d{4}" title="Por favor, insira um ano válido de 4 dígitos" required>
+      <label for="filtro_periodo">Período:</label>
+      <select id="filtro_periodo" name="filtro_periodo" required disabled>
+        <option value="{{ meu_valor_padrao }}" selected>Todos</option>
+        <option value="1">1º período</option>
+        <option value="2">2º período</option>
+        <option value="3">3º período</option>
+      </select>
+      <label for="termo">Tipo Ingresso:</label>
       <select id="termo" name="termo">
-        <option value="{{ meu_valor_padrao }}" selected/>Todos</option>
+        <option value="{{ meu_valor_padrao }}" selected>Todos</option>
         <option value="cotista">Cotista</option>
         <option value="nao-cotista">Não cotista</option>
         <option value="outros">Outros</option>
       </select>
+      <span id="aviso-ano" style="color: red; display: none;">Por favor, selecione um ano.</span>
       <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
-    {{maior_reprovacao|safe}}
+    {{ maior_reprovacao | safe }}
   </div>
 </div>
 
 <script>
   var filtro_ano = "{{ request.args.get('filtro_ano', '') }}";
   var termo = "{{ request.args.get('termo', '') }}";
+  var filtro_periodo = "{{ request.args.get('filtro_periodo', '') }}";
+
   document.getElementById("filtro_ano").value = filtro_ano;
   document.getElementById("termo").value = termo;
+  document.getElementById("filtro_periodo").value = filtro_periodo;
+
+  document.getElementById("filtro_ano").addEventListener("change", function() {
+    var filtroPeriodo = document.getElementById("filtro_periodo");
+    var filtroAno = document.getElementById("filtro_ano");
+    if (filtroAno.value !== "") {
+      filtroPeriodo.required = true;
+      filtroPeriodo.disabled = false;
+    } else {
+      filtroPeriodo.required = false;
+      filtroPeriodo.disabled = true;
+    }
+  });
 </script>
+
 {% endblock %}

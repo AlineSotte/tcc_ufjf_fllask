@@ -67,24 +67,26 @@ class Analise:
             .reset_index(name='TOTAL_REPROVACAO') 
         return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
     
-    def calcular_diciplinas_maior_reprovacao_ano(self,arquivo,ano,situacao):
+    def calcular_diciplinas_maior_reprovacao_ano(self,arquivo,ano,situacao,periodo):
         
         df_rep= pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','DISCIPLINA','PERIODO', 'NOTA','SITUACAO_DISCIPLINA'])
         reprovacao_disciplina= df_rep.query('SITUACAO_DISCIPLINA in ("Reprovado","Rep Nota")')
         
         ano_semestre = reprovacao_disciplina.PERIODO
         ano_materia = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
+        periodo_materia = ano_semestre.astype(str).apply(lambda x: x.split('/')[1])
         reprovacao_disciplina.insert(reprovacao_disciplina.shape[1]-1, "AnoDisciplina",ano_materia,True)
+        reprovacao_disciplina.insert(reprovacao_disciplina.shape[1]-1, "PeriodoDisciplina",periodo_materia,True)
         reprovacao_disciplina['AnoDisciplina'] = reprovacao_disciplina['AnoDisciplina'].astype(str)
          
-        if ano != '' and situacao == '':
+        if ano != '' and situacao == '' and periodo == '':
             busca_ano = reprovacao_disciplina[reprovacao_disciplina['AnoDisciplina'].str.contains(ano)].reset_index(drop=True)
             agrupamento_dados_rep = busca_ano.groupby(['DISCIPLINA']).size()\
                 .sort_values(ascending=False) \
                 .reset_index(name='TOTAL_REPROVACAO') 
             return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
         
-        elif ano == '' and situacao != '':
+        elif ano == '' and situacao != '' and periodo =='':
             if situacao == 'cotista':
                 dado_cota = reprovacao_disciplina.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby('DISCIPLINA').size()\
                     .sort_values(ascending=False) \
@@ -101,7 +103,8 @@ class Analise:
                     .sort_values(ascending=False) \
                     .reset_index(name='TOTAL_REPROVACAO') 
                 return dado_outros.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
-        else:
+        
+        elif ano != '' and situacao != '' and periodo == '':
             busca_ano = reprovacao_disciplina[reprovacao_disciplina['AnoDisciplina'].str.contains(ano)].reset_index(drop=True)
             if situacao == 'cotista':
                 agrupamento_dados_rep = busca_ano.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['DISCIPLINA']).size()\
@@ -118,10 +121,39 @@ class Analise:
                 .sort_values(ascending=False) \
                 .reset_index(name='TOTAL_REPROVACAO') 
                 return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
-         
-    def filtro_reprovacao(self,arquivo,filtro,situacao):
-        if filtro!= '' or situacao != '':
-            rep_ano = self.calcular_diciplinas_maior_reprovacao_ano(arquivo,filtro,situacao)
+            
+        elif ano != '' and situacao == '' and periodo != '':
+            busca_ano = reprovacao_disciplina[reprovacao_disciplina['AnoDisciplina'].str.contains(ano)].reset_index(drop=True)
+            busca_periodo = busca_ano[busca_ano['PeriodoDisciplina'].str.contains(periodo)].reset_index(drop=True)
+            agrupamento_dados_rep = busca_periodo.groupby(['DISCIPLINA']).size()\
+                .sort_values(ascending=False) \
+                .reset_index(name='TOTAL_REPROVACAO') 
+            return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
+            
+        elif ano != '' and situacao != '' and periodo != '':
+            busca_ano = reprovacao_disciplina[reprovacao_disciplina['AnoDisciplina'].str.contains(ano)].reset_index(drop=True)
+            busca_periodo = busca_ano[busca_ano['PeriodoDisciplina'].str.contains(periodo)].reset_index(drop=True)
+            if situacao == 'cotista':
+                agrupamento_dados_rep = busca_periodo.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['DISCIPLINA']).size()\
+                .sort_values(ascending=False) \
+                .reset_index(name='TOTAL_REPROVACAO') 
+                return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
+            elif situacao == 'nao-cotista':
+                agrupamento_dados_rep = busca_periodo.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")').groupby(['DISCIPLINA']).size()\
+                .sort_values(ascending=False) \
+                .reset_index(name='TOTAL_REPROVACAO') 
+                return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
+            else:
+                agrupamento_dados_rep = busca_periodo.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['DISCIPLINA']).size()\
+                .sort_values(ascending=False) \
+                .reset_index(name='TOTAL_REPROVACAO') 
+                return agrupamento_dados_rep.nlargest(n=10, columns=['TOTAL_REPROVACAO'])
+        
+            
+            
+    def filtro_reprovacao(self,arquivo,filtro,situacao,periodo):
+        if filtro!= '' or situacao != '' or periodo !='':
+            rep_ano = self.calcular_diciplinas_maior_reprovacao_ano(arquivo,filtro,situacao,periodo)
             return rep_ano
         else:
             alunos = self.calcular_diciplinas_maior_reprovacao(arquivo)
