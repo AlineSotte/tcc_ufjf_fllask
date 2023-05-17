@@ -1,0 +1,51 @@
+{% extends "base_analise.html" %} {% block content2 %}
+
+<div id="scroll-tabela">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ALUNO</th>
+          <th>TIPO INGRESSO</th>
+          <th>SITUACAO ALUNO</th>
+          <th>IRA</th>
+          <th>ANO ENTRADA</th>
+          <th>ULTIMA MATRICULA</th>
+          <th>TEMPO GRADUACAO</th>
+          <th> % CARGA HORARIA</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for index,aluno in data.iterrows() %}
+        <tr>
+          <td>{{ aluno['ALUNO'] }}</td>
+          <td>{{ aluno['TIPOINGRESSO'] }}</td>
+          <td>{{ aluno['SITUACAO_ALUNO'] }}</td>
+          <td>{{ aluno['IRA'] }}</td>
+          <td>{{ aluno['ANO ENTRADA'] }}</td>
+          <td>{{ aluno['ULTIMA MATRICULA'] }}</td>
+          <td>{{ aluno['TEMPO GRADUACAO'] }}</td>
+          <td>{{ aluno['% CARGA HORARIA'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div>
+  {% if page > 1 %}
+  <a href="{{ url_for('analise_retidos', id_usuario=id_usuario, id=id, page=page-1, filtro=request.args.get('filtro'), situacao=request.args.get('situacao')) }}">Anterior</a>
+  {% else %}
+  <a class="disabled">Anterior</a>
+  {% endif %}
+  
+  {% if page < num_pages %}
+  <a href="{{ url_for('analise_retidos', id_usuario=id_usuario, id=id, page=page+1, filtro=request.args.get('filtro'), situacao=request.args.get('situacao')) }}">Próxima</a>
+  {% else %}
+  <a class="disabled">Próxima</a>
+  {% endif %}
+  
+</div>
+<div>
+{{grafico_analise_retido|safe}}
+</di>
+{% endblock %}

@@ -245,7 +245,6 @@ class Analise:
             arquivo['ALUNO'] = arquivo['ALUNO'].astype(str)
         if nome_aluno != '' and situacao_aluno == '':
             busca_arquivo =  arquivo[arquivo['ALUNO'].str.contains(nome_aluno)].reset_index(drop=True)
-            cont_alunos = busca_arquivo.shape[0]
             return  self.alunos_curso(busca_arquivo)
         elif nome_aluno == '' and situacao_aluno !='':
             if situacao_aluno == 'ativo':
@@ -300,3 +299,106 @@ class Analise:
         else:
             alunos = self.alunos_curso(arquivo)
             return alunos
+        
+    def analise_estatistica_evasao(self, id_arquivo):
+        arquivo = self.ler_ultimo_arquivo(id_arquivo)
+        df2 = pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','IRA','CARGA_HOR','PERIODO','SITUACAO_DISCIPLINA'])
+        evadidos = df2[(df2.SITUACAO_ALUNO == 'Cancelado') | (df2.SITUACAO_ALUNO == 'Jubilado') ]
+
+        df_descrescente = evadidos.sort_values('PERIODO')
+        df_grouped = df_descrescente.groupby(['ALUNO'])
+        df_ultimo = df_grouped.tail(1)
+
+        ano_semestre = df_ultimo.INGRESSO
+        ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
+        ultima_matricula = df_ultimo.PERIODO
+        ano_final = ultima_matricula.astype(str).apply(lambda x: x.split('/')[0])
+        tempo_formar = ano_final.astype(int) - ano.astype(int)
+        df_ultimo.insert(df_ultimo.shape[1]-1, "AnoEntrada",ano, True)
+        df_ultimo.insert(df_ultimo.shape[1]-1, "UltimaMatricula",ano_final, True)
+        df_ultimo.insert(df_ultimo.shape[1]-1, "TempoMatricula",tempo_formar, True)
+
+        analise_estatistica = df_ultimo[['TIPOINGRESSO','TempoMatricula', 'IRA', 'CARGA_HOR']]
+        return analise_estatistica
+    
+    def analise_estatistica_evasao_total(self,arquivo):
+        analise_estatistica = arquivo[['TempoMatricula', 'IRA', 'CARGA_HOR']]
+        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência','CARGA_HOR':'Carga Horária'}
+        analise_estatistica.rename(columns=novo_nome_colunas, inplace=True)
+        return self.metrica_estatistica(analise_estatistica)
+
+    def analise_estatistica_evasao_n_cotista(self,arquivo):
+        dado_n_cota = arquivo.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")')
+        analise_estatistica = dado_n_cota[['TempoMatricula', 'IRA', 'CARGA_HOR']]
+        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência','CARGA_HOR':'Carga Horária'}
+        analise_estatistica.rename(columns=novo_nome_colunas, inplace=True)
+        return self.metrica_estatistica(analise_estatistica)
+    
+    def analise_estatistica_evasao_cotista(self,arquivo):
+        dado_cota = arquivo.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
+        analise_estatistica = dado_cota[['TempoMatricula', 'IRA', 'CARGA_HOR']]
+        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência','CARGA_HOR':'Carga Horária'}
+        analise_estatistica.rename(columns=novo_nome_colunas, inplace=True)
+        return self.metrica_estatistica(analise_estatistica)
+
+    def analise_estatistica_evasao_outros(self,arquivo):
+        dado_outros = arquivo.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
+        analise_estatistica = dado_outros[['TempoMatricula', 'IRA', 'CARGA_HOR']]
+        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência','CARGA_HOR':'Carga Horária'}
+        analise_estatistica.rename(columns=novo_nome_colunas, inplace=True)
+        return self.metrica_estatistica(analise_estatistica)
+    
+    def analise_retidos(self,id_arquivo):
+        arquivo=self.ler_ultimo_arquivo(id_arquivo)
+        df2 = pd.DataFrame(arquivo, columns=['INGRESSO','ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','IRA','CARGA_HOR','PERIODO','SITUACAO_DISCIPLINA'])
+        retidos = df2[(df2.SITUACAO_ALUNO == 'Ativo')]
+
+        df_descrescente = retidos.sort_values('PERIODO')
+        df_grouped = df_descrescente.groupby(['ALUNO'])
+        df_ultimo = df_grouped.tail(1)
+
+        ano_semestre = df_ultimo.INGRESSO
+        ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
+        ultima_matricula = df_ultimo.PERIODO
+        ano_final = ultima_matricula.astype(str).apply(lambda x: x.split('/')[0])
+        carga_horaria = ( df_ultimo.CARGA_HOR.astype(int)/3060)*100
+        porcentagem_relizada_curso = carga_horaria.round(2)
+        tempo_formar = ano_final.astype(int) - ano.astype(int)
+        df_ultimo.insert(df_ultimo.shape[1]-1, "ANO ENTRADA",ano, True)
+        df_ultimo.insert(df_ultimo.shape[1]-1, "ULTIMA MATRICULA",ano_final, True)
+        df_ultimo.insert(df_ultimo.shape[1]-1, "TEMPO GRADUACAO",tempo_formar, True)
+        df_ultimo.insert(df_ultimo.shape[1]-1,"% CARGA HORARIA",porcentagem_relizada_curso, True)
+
+        df_ultimo.head()
+        retido= df_ultimo[df_ultimo['TEMPO GRADUACAO'] > 4]
+        retido_final = retido[['ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','IRA','ANO ENTRADA', 'ULTIMA MATRICULA', 'TEMPO GRADUACAO','% CARGA HORARIA']]
+        return retido_final.sort_values(by='ANO ENTRADA', ascending=True)
+
+    
+    def grafico_retido_por_situacao(self,arquivo):
+        import plotly.graph_objects as go
+
+    def grafico_retido_por_situacao(self, arquivo):
+        retido_final = arquivo
+        
+        dado_n_cota = retido_final.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")').groupby(['SITUACAO_ALUNO']).size()\
+            .sort_values(ascending=False) \
+            .reset_index(name='TOTAL') 
+        dado_n_cota['Tipo'] = pd.Series(['Não Cotista' for x in range(len(dado_n_cota.index))])
+
+        dado_outros = retido_final.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['SITUACAO_ALUNO']).size()\
+            .sort_values(ascending=False) \
+            .reset_index(name='TOTAL') 
+        dado_outros['Tipo'] = pd.Series(['Outros' for x in range(len(dado_outros.index))])
+
+        dado_cota = retido_final.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['SITUACAO_ALUNO']).size()\
+            .sort_values(ascending=False) \
+            .reset_index(name='TOTAL') 
+        dado_cota['Tipo'] = pd.Series(['Cotista' for x in range(len(dado_cota.index))])
+        
+        df = pd.concat([dado_n_cota, dado_cota, dado_outros])
+        fig = go.Figure()
+        fig.add_trace(go.Bar(x=df['Tipo'], y=df['TOTAL']))
+        fig.update_layout(title='Contagem da Situação dos Alunos Retidos', xaxis_title='Tipo Ingresso', yaxis_title='Total Alunos')
+        
+        return fig

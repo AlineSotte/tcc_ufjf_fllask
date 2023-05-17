@@ -161,13 +161,30 @@ def analise_formandos(id_usuario,id):
     return render_template('analise_formandos.html', id_usuario=id_usuario,id=id,
                            analise=analise,analise2=analise2,analise3=analise3,analise4=analise4)
     
-@app.route('/analise_evasao/<int:id_usuario>/<int:id>', methods=['GET'])
-def analise_evasao(id_usuario, id):
-        return render_template('analise_evasao.html', id_usuario=id_usuario, id=id)
-    
 @app.route('/analise_retidos/<int:id_usuario>/<int:id>', methods=['GET'])
 def analise_retidos(id_usuario, id):
-        return render_template('analise_evasao.html', id_usuario=id_usuario, id=id)
+    analise = instancia.analise_retidos(id)
+    page = request.args.get('page', default=1, type=int)
+    per_page = 5
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    num_pages = math.ceil(len(analise) / per_page)
+    filtro_pagina = analise.iloc[start_idx:end_idx]
+    grafico_analise_retido = instancia.grafico_retido_por_situacao(analise).to_html(full_html=False)
+    return render_template('analise_retidos.html', id_usuario=id_usuario, id=id,
+                           data=filtro_pagina,num_pages=num_pages, page=page,
+                           per_page=per_page, grafico_analise_retido=grafico_analise_retido)
+    
+@app.route('/analise_evasao/<int:id_usuario>/<int:id>', methods=['GET'])
+def analise_evasao(id_usuario, id):
+    analise = instancia.analise_estatistica_evasao(id)
+    analise1 = instancia.analise_estatistica_evasao_total(analise).to_html(classes='table table-strip')
+    analise2 = instancia.analise_estatistica_evasao_cotista(analise).to_html(classes='table table-strip')
+    analise3 = instancia.analise_estatistica_evasao_n_cotista(analise).to_html(classes='table table-strip')
+    analise4= instancia.analise_estatistica_evasao_outros(analise).to_html(classes='table table-strip')
+    return render_template('analise_evasao.html', id_usuario=id_usuario,
+                           id=id, analise=analise, analise1=analise1,analise2=analise2,
+                           analise3=analise3,analise4=analise4)
 
 @app.route('/matricula_periodo/<int:id_usuario>/<int:id>', methods=['GET'])
 def matricula_periodo(id_usuario, id):
