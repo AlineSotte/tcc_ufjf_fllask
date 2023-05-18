@@ -3,22 +3,21 @@
 <div>
   <h6>Disciplinas que mais reprovam no curso de graduação analisado</h6>
   <br>
-  <p> Se escolher o Período, deve escolher o ano.</p>
+  <p>Se escolher o Período, é necessário preencher o ano.</p>
   <div>
     <form method="GET" id="formulario_rep" action="{{ url_for('disicplinas_reprovacao', id_usuario=id_usuario, id=id)}}">
       <label for="filtro_ano">Filtro Ano:</label>
-      <input type="text" id="filtro_ano" name="filtro_ano" value="{{ meu_valor_padrao }}" placeholder="Ex: 2012"
-             pattern="\d{4}" title="Por favor, insira um ano válido de 4 dígitos" >
+      <input type="text" id="filtro_ano" name="filtro_ano" value="{{ meu_valor_padrao }}" placeholder="Ex: 2012" pattern="\d{4}" title="Por favor, insira um ano válido de 4 dígitos">
       <label for="filtro_periodo">Período:</label>
-      <select id="filtro_periodo" name="filtro_periodo" >
-        <option value="{{ meu_valor_padrao }}" selected>Todos</option>
+      <select id="filtro_periodo" name="filtro_periodo">
+        <option value="{{ meu_valor_padrao }}">Todos</option>
         <option value="1">1º período</option>
         <option value="2">2º período</option>
         <option value="3">3º período</option>
       </select>
-      <label for="termo">Tipo Ingresso:</label>
+      <label for="termo">Tipo de Ingresso:</label>
       <select id="termo" name="termo">
-        <option value="{{ meu_valor_padrao }}" selected>Todos</option>
+        <option value="{{ meu_valor_padrao }}">Todos</option>
         <option value="cotista">Cotista</option>
         <option value="nao-cotista">Não cotista</option>
         <option value="outros">Outros</option>
@@ -31,7 +30,6 @@
 </div>
 
 <script>      
-
   var filtro_ano = "{{ request.args.get('filtro_ano', '') }}";
   var termo = "{{ request.args.get('termo', '') }}";
   var filtro_periodo = "{{ request.args.get('filtro_periodo', '') }}";
@@ -40,6 +38,20 @@
   document.getElementById("termo").value = termo;
   document.getElementById("filtro_periodo").value = filtro_periodo;
 
+  // Habilitar/desabilitar o campo de seleção de período e termo com base no preenchimento do ano
+  document.getElementById("filtro_ano").addEventListener("input", function() {
+    var filtroAno = document.getElementById("filtro_ano").value;
+    var filtroPeriodo = document.getElementById("filtro_periodo");
+    var filtroTermo = document.getElementById("termo");
+
+    if (filtroAno) {
+      filtroPeriodo.disabled = false;
+      filtroTermo.disabled = false;
+    } else {
+      filtroPeriodo.disabled = true;
+      filtroTermo.disabled = false;
+    }
+  });
 </script>
 
 {% endblock %}

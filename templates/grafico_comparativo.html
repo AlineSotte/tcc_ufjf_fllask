@@ -1,3 +1,13 @@
 {% extends "base_analise.html" %} {% block content2 %}
+
+<p>Análise dos alunos por tipo de ingresso e situação no curso de graduação:</p>
+
+<ul>
+  <li>Cotistas: alunos admitidos por meio do PISM ou SISU através de vagas destinadas às cotas.</li>
+  <li>Não cotistas: alunos admitidos por meio do PISM ou SISU através de vagas não destinadas às cotas.</li>
+  <li>Outros: alunos admitidos por Transferência Obrigatória, Sentença Judicial, Mudança de Curso, Vestibular e PISM, sendo os dois últimos sem política de cotas.</li>
+</ul>
+
 {{grafico|safe}}
 {% endblock %}
+

@@ -17,7 +17,7 @@ class Analise:
         .reset_index(name='TOTAL_SITUACAO_ALUNO') 
         fig = make_subplots(rows=1, cols=1)
         fig.add_trace(go.Bar(x=agrupamento_dados['SITUACAO_ALUNO'], y=agrupamento_dados['TOTAL_SITUACAO_ALUNO']), row=1, col=1)
-        fig.update_layout(title='Contagem da Situação dos Alunos', xaxis_title='Situação Aluno', yaxis_title='Total por Situação dos Alunos')
+        fig.update_layout(title='Análise Gráfica do Total de Alunos por Situação na Graduação', xaxis_title='Situação Aluno', yaxis_title='Total por Situação dos Alunos')
         return fig
     
     def ler_ultimo_arquivo(self,id):
@@ -50,7 +50,7 @@ class Analise:
         trace3 = go.Bar(x=df[(df['Tipo'] == 'Outros')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'Outros')]['TOTAL'],
                         name='Outros', marker=dict(color='#e74c3c'))
         data = [trace1, trace2, trace3]
-        layout = go.Layout(title='Gráfico Comparativos em relação ao Ingresso na UFJF',
+        layout = go.Layout(title='Comparação gráfica da situação do aluno em relação ao tipo de ingresso na UFJF',
                         xaxis=dict(title='Situação do Aluno'),
                         yaxis=dict(title='Total'),
                         barmode='group')
@@ -412,6 +412,6 @@ class Analise:
         df = pd.concat([dado_n_cota, dado_cota, dado_outros])
         fig = go.Figure()
         fig.add_trace(go.Bar(x=df['Tipo'], y=df['TOTAL']))
-        fig.update_layout(title='Contagem da Situação dos Alunos Retidos', xaxis_title='Tipo Ingresso', yaxis_title='Total Alunos')
+        fig.update_layout(title='Análise Gráfica do total de alunos retidos em relação ao tipo de ingresso', xaxis_title='Tipo Ingresso', yaxis_title='Total Alunos')
         
         return fig
