@@ -5,6 +5,16 @@
             <div class="d-flex justify-content-between align-items-center">
             <a href="{{ url_for('analise', id_usuario=id_usuario,id=id) }}" class="btn btn-primary"> Analise</a>
            </div>
+           <div>
+            <form
+              method="GET"
+              action="{{ url_for('dashboard', id_usuario=id_usuario,id=id)}}"
+            >
+              <label for="filtro" value="{{ meu_valor_padrao }}">Filtro Aluno:</label>
+              <input type="text" id="filtro" name="filtro" value="{{ meu_valor_padrao }}" />     
+              <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+          </div>
             <div id="scroll-tabela">
                <table class="table table-striped">
                   <thead>
@@ -53,14 +63,19 @@
             </div>
             <div>
                {% if page > 1 %}
-               <a href="{{ url_for('dashboard', id_usuario=id_usuario,id=id,page=page-1) }}">Anterior</a>
+               <a href="{{ url_for('dashboard', id_usuario=id_usuario,id=id,filtro=request.args.get('filtro'),page=page-1) }}">Anterior</a>
                {% else %}
                <a class="disabled">Anterior</a>
                {% endif %}
                {% if page < num_pages %}
-               <a href="{{ url_for('dashboard',id_usuario=id_usuario,id=id,page=page+1) }}">Próxima</a>
+               <a href="{{ url_for('dashboard',id_usuario=id_usuario,id=id,filtro=request.args.get('filtro'),page=page+1) }}">Próxima</a>
                {% else %}
                <a class="disabled">Próxima</a>
                {% endif %}
             </div>
+
+<script>
+   var filtro_ano = "{{ request.args.get('filtro_ano', '') }}";   
+   document.getElementById("filtro_ano").value = filtro_ano;
+</script>
    {% endblock %}

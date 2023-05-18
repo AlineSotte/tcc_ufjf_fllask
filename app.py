@@ -95,17 +95,25 @@ def csv_list(id_usuario):
 @app.route('/dashboard/<int:id_usuario>/<int:id>', methods=['GET'])
 def dashboard(id_usuario, id):
     df = instancia.ler_ultimo_arquivo(id)
-    if df.empty:
-        flash('O arquivo CSV está vazio', 'error')
-        return redirect(url_for('csv_list', id_usuario=id_usuario))
+    meu_valor_padrao=''
+    filtro = request.args.get('filtro',meu_valor_padrao)
     page = request.args.get('page', default=1, type=int)
     per_page = 5
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
-    data = df.iloc[start_idx:end_idx]
-    num_pages = len(df) // per_page + 1
+    
+    if df.empty:
+        flash('O arquivo CSV está vazio', 'error')
+        return redirect(url_for('csv_list', id_usuario=id_usuario))
+    elif filtro != '':
+        busca = df[df['ALUNO'].astype(str).str.contains(filtro)].reset_index(drop=True)
+        num_pages = len(busca) // per_page + 1
+        data = busca.iloc[start_idx:end_idx]
+    else:
+        num_pages = len(df) // per_page + 1
+        data = df.iloc[start_idx:end_idx]
     return render_template('dashboard.html', id_usuario=id_usuario,id=id,data=data, 
-                           page=page, num_pages=num_pages)
+                           page=page, num_pages=num_pages, meu_valor_padrao=meu_valor_padrao)
 
 ## Analise ##
 @app.route('/disciplina_reprovacao/<int:id_usuario>/<int:id>', methods=['GET'])
