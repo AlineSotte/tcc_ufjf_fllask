@@ -27,7 +27,7 @@
     <li class="nav-item">
       <a class="nav-link"
       href="{{ url_for('grafico_comparativo', id_usuario=id_usuario,id=id) }}"
-      > Grafico Comparativo</a
+      > Grafico Comparativo Situação Aluno</a
     >
     </li>
     <li class="nav-item">
@@ -38,16 +38,23 @@
     <li class="nav-item">
       <a class="nav-link"
       href="{{ url_for('analise_evasao', id_usuario=id_usuario,id=id) }}"
-      > Analise Evasão</a
+      > Analise Alunos Evadidos</a
     >
   </li>
     <li class="nav-item"> 
     <a class="nav-link"
     href="{{ url_for('analise_retidos', id_usuario=id_usuario,id=id) }}"
-    > Analise Retidos</a
+    > Analise Alunos Retidos</a
   >
   </li>
-    <li class="nav-item">
+  </li>
+  <li class="nav-item"> 
+    <a class="nav-link"
+    href="{{ url_for('alunos_retidos', id_usuario=id_usuario,id=id) }}"
+    > Lista Alunos Retidos</a
+    >
+  </li>
+  <li class="nav-item">
       <a class="nav-link"
       href="{{ url_for('disicplinas_reprovacao', id_usuario=id_usuario,id=id) }}"
       > Analise Disciplina Reprovação</a

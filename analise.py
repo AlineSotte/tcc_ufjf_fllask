@@ -368,15 +368,28 @@ class Analise:
         df_ultimo.insert(df_ultimo.shape[1]-1, "ULTIMA MATRICULA",ano_final, True)
         df_ultimo.insert(df_ultimo.shape[1]-1, "TEMPO GRADUACAO",tempo_formar, True)
         df_ultimo.insert(df_ultimo.shape[1]-1,"% CARGA HORARIA",porcentagem_relizada_curso, True)
-
-        df_ultimo.head()
         retido= df_ultimo[df_ultimo['TEMPO GRADUACAO'] > 4]
         retido_final = retido[['ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','IRA','ANO ENTRADA', 'ULTIMA MATRICULA', 'TEMPO GRADUACAO','% CARGA HORARIA']]
         return retido_final.sort_values(by='ANO ENTRADA', ascending=True)
 
+    def analise_estatistica_retido_total(self,arquivo):
+        analise_estatistica = arquivo[['TEMPO GRADUACAO', 'IRA', '% CARGA HORARIA']]
+        return self.metrica_estatistica(analise_estatistica)
+
+    def analise_estatistica_retido_n_cotista(self,arquivo):
+        dado_n_cota = arquivo.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")')
+        analise_estatistica = dado_n_cota[['TEMPO GRADUACAO', 'IRA', '% CARGA HORARIA']]
+        return self.metrica_estatistica(analise_estatistica)
     
-    def grafico_retido_por_situacao(self,arquivo):
-        import plotly.graph_objects as go
+    def analise_estatistica_retido_cotista(self,arquivo):
+        dado_cota = arquivo.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
+        analise_estatistica = dado_cota[['TEMPO GRADUACAO', 'IRA', '% CARGA HORARIA']]
+        return self.metrica_estatistica(analise_estatistica)
+
+    def analise_estatistica_retido_outros(self,arquivo):
+        dado_outros = arquivo.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
+        analise_estatistica = dado_outros[['TEMPO GRADUACAO', 'IRA', '% CARGA HORARIA']]
+        return self.metrica_estatistica(analise_estatistica)
 
     def grafico_retido_por_situacao(self, arquivo):
         retido_final = arquivo
