@@ -38,20 +38,5 @@
   document.getElementById("termo").value = termo;
   document.getElementById("filtro_periodo").value = filtro_periodo;
 
-  // Habilitar/desabilitar o campo de seleção de período e termo com base no preenchimento do ano
-  document.getElementById("filtro_ano").addEventListener("input", function() {
-    var filtroAno = document.getElementById("filtro_ano").value;
-    var filtroPeriodo = document.getElementById("filtro_periodo");
-    var filtroTermo = document.getElementById("termo");
-
-    if (filtroAno) {
-      filtroPeriodo.disabled = false;
-      filtroTermo.disabled = false;
-    } else {
-      filtroPeriodo.disabled = true;
-      filtroTermo.disabled = false;
-    }
-  });
 </script>
-
 {% endblock %}
