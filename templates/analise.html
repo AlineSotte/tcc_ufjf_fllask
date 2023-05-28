@@ -1,5 +1,6 @@
 {% extends "base_analise.html" %} {% block content2 %}
   <div>
+  </br>
     <form
       method="GET"
       action="{{ url_for('analise', id_usuario=id_usuario,id=id)}}"
@@ -19,6 +20,11 @@
       </select>      
       <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
+  </div>
+  <div>
+  </br>
+  Total de Alunos : {{total_busca}}
+  </br>
   </div>
   <div id="scroll-tabela">
     <table class="table table-striped">

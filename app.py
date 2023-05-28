@@ -135,6 +135,7 @@ def analise(id_usuario,id):
     filtro = request.args.get('filtro',meu_valor_padrao)
     situacao_aluno = request.args.get('situacao',meu_valor_padrao)
     busca_aluno= instancia.filtro_alunos(df,filtro,situacao_aluno)
+    total_busca = busca_aluno.shape[0]
     page = request.args.get('page', default=1, type=int)
     per_page = 5
     start_idx = (page - 1) * per_page
@@ -143,7 +144,7 @@ def analise(id_usuario,id):
     filtro_pagina = busca_aluno.iloc[start_idx:end_idx]
     return render_template('analise.html', id_usuario=id_usuario,id=id,page=page,
                            busca_aluno=busca_aluno, meu_valor_padrao=meu_valor_padrao,
-                           data=filtro_pagina,num_pages=num_pages,per_page=per_page)
+                           data=filtro_pagina,num_pages=num_pages,per_page=per_page,total_busca=total_busca)
 
 @app.route('/grafico_comparativo/<int:id_usuario>/<int:id>', methods=['GET'])
 def grafico_comparativo(id_usuario,id):
@@ -186,10 +187,9 @@ def alunos_retidos(id_usuario, id):
     else:
         num_pages = len(analise) // per_page + 1
         data = analise.iloc[start_idx:end_idx]
-    grafico_analise_retido = instancia.grafico_retido_por_situacao(analise).to_html(full_html=False)
     return render_template('alunos_retidos.html', id_usuario=id_usuario, id=id,
                            data=data,num_pages=num_pages, page=page,
-                           per_page=per_page,grafico_analise_retido=grafico_analise_retido)
+                           per_page=per_page)
     
 @app.route('/analise_retidos/<int:id_usuario>/<int:id>', methods=['GET'])
 def analise_retidos(id_usuario, id):
@@ -198,9 +198,10 @@ def analise_retidos(id_usuario, id):
     analise1= instancia.analise_estatistica_retido_cotista(arquivo_retidos).to_html(classes='table table-strip')
     analise2 = instancia.analise_estatistica_retido_n_cotista(arquivo_retidos).to_html(classes='table table-strip')
     analise3 = instancia.analise_estatistica_retido_outros(arquivo_retidos).to_html(classes='table table-strip')
+    grafico_analise_retido = instancia.grafico_retido_por_situacao(arquivo_retidos).to_html(full_html=False)
     return render_template('analise_retidos.html', id_usuario=id_usuario, id=id,
                            analise=analise, analise2=analise2, analise1=analise1,
-                           analise3=analise3)
+                           analise3=analise3,grafico_analise_retido=grafico_analise_retido)
     
 @app.route('/analise_evasao/<int:id_usuario>/<int:id>', methods=['GET'])
 def analise_evasao(id_usuario, id):

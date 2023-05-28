@@ -189,7 +189,7 @@ class Analise:
         tempo_formar = ano_final.astype(int) - ano.astype(int)
         df.insert(2, "AnoEntrada",ano, True)
         df.insert(3, "AnoSaida",ano_final, True)
-        df.insert(4, "Tempo de Graduação",tempo_formar, True)
+        df.insert(4, "Tempo de Graduação(Anos)",tempo_formar, True)
         dados_unicos = df.drop_duplicates().reset_index(drop=True)
         return dados_unicos
     
@@ -210,28 +210,28 @@ class Analise:
     
     def analise_estatistica_formando(self,arquivo):
         dado_unico = self.analise_estatistica(arquivo)
-        data = dado_unico[['Tempo de Graduação', 'IRA']]
+        data = dado_unico[['Tempo de Graduação(Anos)', 'IRA']]
         analise_formando = self.metrica_estatistica(data)
         return analise_formando
 
     def analise_estatistica_formando_n_cotista(self,arquivo):
         dados_unicos = self.analise_estatistica(arquivo)
         dado_n_cota = dados_unicos.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")')
-        data = dado_n_cota[['Tempo de Graduação', 'IRA']]
+        data = dado_n_cota[['Tempo de Graduação(Anos)', 'IRA']]
         descricao=self.metrica_estatistica(data)
         return descricao
     
     def analise_estatistica_formando_cotista(self,arquivo):
         dados_unicos = self.analise_estatistica(arquivo)
         dado_cota = dados_unicos.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
-        data = dado_cota[['Tempo de Graduação', 'IRA']]
+        data = dado_cota[['Tempo de Graduação(Anos)', 'IRA']]
         descricao = self.metrica_estatistica(data)
         return descricao
 
     def analise_estatistica_formando_outros(self,arquivo):
         dados_unicos = self.analise_estatistica(arquivo)
         dado_outros = dados_unicos.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
-        data= dado_outros[['Tempo de Graduação', 'IRA']]
+        data= dado_outros[['Tempo de Graduação(Anos)', 'IRA']]
         descricao = self.metrica_estatistica(data)
         return descricao
 
@@ -323,28 +323,28 @@ class Analise:
     
     def analise_estatistica_evasao_total(self,arquivo):
         analise_estatistica = arquivo[['TempoMatricula', 'IRA', 'CARGA_HOR']]
-        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência','CARGA_HOR':'Carga Horária'}
+        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência(Anos)','CARGA_HOR':'Carga Horária'}
         analise_estatistica.rename(columns=novo_nome_colunas, inplace=True)
         return self.metrica_estatistica(analise_estatistica)
 
     def analise_estatistica_evasao_n_cotista(self,arquivo):
         dado_n_cota = arquivo.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")')
         analise_estatistica = dado_n_cota[['TempoMatricula', 'IRA', 'CARGA_HOR']]
-        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência','CARGA_HOR':'Carga Horária'}
+        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência(Anos)','CARGA_HOR':'Carga Horária'}
         analise_estatistica.rename(columns=novo_nome_colunas, inplace=True)
         return self.metrica_estatistica(analise_estatistica)
     
     def analise_estatistica_evasao_cotista(self,arquivo):
         dado_cota = arquivo.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
         analise_estatistica = dado_cota[['TempoMatricula', 'IRA', 'CARGA_HOR']]
-        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência','CARGA_HOR':'Carga Horária'}
+        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência(Anos)','CARGA_HOR':'Carga Horária'}
         analise_estatistica.rename(columns=novo_nome_colunas, inplace=True)
         return self.metrica_estatistica(analise_estatistica)
 
     def analise_estatistica_evasao_outros(self,arquivo):
         dado_outros = arquivo.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
         analise_estatistica = dado_outros[['TempoMatricula', 'IRA', 'CARGA_HOR']]
-        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência','CARGA_HOR':'Carga Horária'}
+        novo_nome_colunas = {'TempoMatricula': 'Tempo de Permanência(Anos)','CARGA_HOR':'Carga Horária'}
         analise_estatistica.rename(columns=novo_nome_colunas, inplace=True)
         return self.metrica_estatistica(analise_estatistica)
     
@@ -361,34 +361,33 @@ class Analise:
         ano = ano_semestre.astype(str).apply(lambda x: x.split('/')[0])
         ultima_matricula = df_ultimo.PERIODO
         ano_final = ultima_matricula.astype(str).apply(lambda x: x.split('/')[0])
-        carga_horaria = ( df_ultimo.CARGA_HOR.astype(int)/3060)*100
-        porcentagem_relizada_curso = carga_horaria.round(2)
+        carga_horaria = (( df_ultimo.CARGA_HOR.astype(int)/3060)*100).round(0)
         tempo_formar = ano_final.astype(int) - ano.astype(int)
         df_ultimo.insert(df_ultimo.shape[1]-1, "ANO ENTRADA",ano, True)
         df_ultimo.insert(df_ultimo.shape[1]-1, "ULTIMA MATRICULA",ano_final, True)
-        df_ultimo.insert(df_ultimo.shape[1]-1, "TEMPO GRADUACAO",tempo_formar, True)
-        df_ultimo.insert(df_ultimo.shape[1]-1,"% CARGA HORARIA",porcentagem_relizada_curso, True)
-        retido= df_ultimo[df_ultimo['TEMPO GRADUACAO'] > 4]
-        retido_final = retido[['ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','IRA','ANO ENTRADA', 'ULTIMA MATRICULA', 'TEMPO GRADUACAO','% CARGA HORARIA']]
+        df_ultimo.insert(df_ultimo.shape[1]-1, "TEMPO GRADUACAO(Anos)",tempo_formar, True)
+        df_ultimo.insert(df_ultimo.shape[1]-1,"% CARGA HORARIA",carga_horaria, True)
+        retido= df_ultimo[df_ultimo['TEMPO GRADUACAO(Anos)'] > 4]
+        retido_final = retido[['ALUNO','TIPOINGRESSO','SITUACAO_ALUNO','IRA','ANO ENTRADA', 'ULTIMA MATRICULA', 'TEMPO GRADUACAO(Anos)','% CARGA HORARIA']]
         return retido_final.sort_values(by='ANO ENTRADA', ascending=True)
 
     def analise_estatistica_retido_total(self,arquivo):
-        analise_estatistica = arquivo[['TEMPO GRADUACAO', 'IRA', '% CARGA HORARIA']]
+        analise_estatistica = arquivo[['TEMPO GRADUACAO(Anos)', 'IRA', '% CARGA HORARIA']]
         return self.metrica_estatistica(analise_estatistica)
 
     def analise_estatistica_retido_n_cotista(self,arquivo):
         dado_n_cota = arquivo.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")')
-        analise_estatistica = dado_n_cota[['TEMPO GRADUACAO', 'IRA', '% CARGA HORARIA']]
+        analise_estatistica = dado_n_cota[['TEMPO GRADUACAO(Anos)', 'IRA', '% CARGA HORARIA']]
         return self.metrica_estatistica(analise_estatistica)
     
     def analise_estatistica_retido_cotista(self,arquivo):
         dado_cota = arquivo.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
-        analise_estatistica = dado_cota[['TEMPO GRADUACAO', 'IRA', '% CARGA HORARIA']]
+        analise_estatistica = dado_cota[['TEMPO GRADUACAO(Anos)', 'IRA', '% CARGA HORARIA']]
         return self.metrica_estatistica(analise_estatistica)
 
     def analise_estatistica_retido_outros(self,arquivo):
         dado_outros = arquivo.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")')
-        analise_estatistica = dado_outros[['TEMPO GRADUACAO', 'IRA', '% CARGA HORARIA']]
+        analise_estatistica = dado_outros[['TEMPO GRADUACAO(Anos)', 'IRA', '% CARGA HORARIA']]
         return self.metrica_estatistica(analise_estatistica)
 
     def grafico_retido_por_situacao(self, arquivo):
@@ -412,6 +411,6 @@ class Analise:
         df = pd.concat([dado_n_cota, dado_cota, dado_outros])
         fig = go.Figure()
         fig.add_trace(go.Bar(x=df['Tipo'], y=df['TOTAL']))
-        fig.update_layout(title='Análise Gráfica do total de alunos retidos em relação ao tipo de ingresso', xaxis_title='Tipo Ingresso', yaxis_title='Total Alunos')
+        fig.update_layout(title='Análise Gráfica do total de alunos retidos,com tempo superior a 4 anos, em relação ao tipo de ingresso', xaxis_title='Tipo Ingresso', yaxis_title='Total Alunos')
         
         return fig

@@ -1,5 +1,10 @@
 {% extends "base_analise.html" %} {% block content2 %}
+</br>
+  <h5>Análise dos alunos retidos com duração de graduação superior a 4 anos.</h5>
   <br/>
+  <p>Na linha "% CARGA HORARIA" a porcentagem foi calculada em relação
+    carga horária total do curso analisado.</p>
+  </br>
   <h6>Analise Estatistica Alunos Retidos</h6>
   {{ analise|safe }}
   <br/>
@@ -12,4 +17,7 @@
   <h6>Analise Estatistica Alunos Retidos Outros</h6>
   {{ analise3|safe }}
   <br/>
+  <div>
+    {{grafico_analise_retido|safe}}
+  </div>
 {% endblock %}
