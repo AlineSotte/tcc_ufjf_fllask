@@ -44,9 +44,9 @@ class Analise:
         dado_cota['Tipo'] = pd.Series(['Cota' for x in range(len(dado_cota.index))])
         df=pd.concat([dado_n_cota,dado_cota,dado_outros])
         trace1 = go.Bar(x=df[(df['Tipo'] == 'Cota')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'Cota')]['TOTAL'],
-                        name='Cotista', marker=dict(color='#2ecc71'))
+                        name='Ações Afirmativas', marker=dict(color='#2ecc71'))
         trace2 = go.Bar(x=df[(df['Tipo'] == 'N_Cota')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'N_Cota')]['TOTAL'],
-                        name='Não Cotista', marker=dict(color='#3498db'))
+                        name='Ampla Concorrência', marker=dict(color='#3498db'))
         trace3 = go.Bar(x=df[(df['Tipo'] == 'Outros')]['SITUACAO_ALUNO'], y=df[(df['Tipo'] == 'Outros')]['TOTAL'],
                         name='Outros', marker=dict(color='#e74c3c'))
         data = [trace1, trace2, trace3]
@@ -396,7 +396,7 @@ class Analise:
         dado_n_cota = retido_final.query('TIPOINGRESSO in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C")').groupby(['SITUACAO_ALUNO']).size()\
             .sort_values(ascending=False) \
             .reset_index(name='TOTAL') 
-        dado_n_cota['Tipo'] = pd.Series(['Não Cotista' for x in range(len(dado_n_cota.index))])
+        dado_n_cota['Tipo'] = pd.Series(['Ampla Concorrência' for x in range(len(dado_n_cota.index))])
 
         dado_outros = retido_final.query('TIPOINGRESSO in ("Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['SITUACAO_ALUNO']).size()\
             .sort_values(ascending=False) \
@@ -406,7 +406,7 @@ class Analise:
         dado_cota = retido_final.query('TIPOINGRESSO not in ("SISU - GRUPO C","SISU - GRUPO C VG Edital","SISU - grupo C - mudança de curso","PISM C/Mudança de Curso","PISM C","Sentença Judicial","Transferęncia Obrigatória","Vestibular","CV/Mudança de Curso","Programa de Ingresso Seletivo Misto")').groupby(['SITUACAO_ALUNO']).size()\
             .sort_values(ascending=False) \
             .reset_index(name='TOTAL') 
-        dado_cota['Tipo'] = pd.Series(['Cotista' for x in range(len(dado_cota.index))])
+        dado_cota['Tipo'] = pd.Series(['Ações Afirmativas' for x in range(len(dado_cota.index))])
         
         df = pd.concat([dado_n_cota, dado_cota, dado_outros])
         fig = go.Figure()
